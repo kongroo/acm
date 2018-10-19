@@ -19,29 +19,29 @@ template <typename T> struct RangePST {
     }
 
     void modify(int l, int r, T val) {
-        static const function<int(int, int, int)> modify_ = [&](int o, int L, int R) {
+        static const auto modify_ = [&](int o, int L, int R, auto f) {
             if (r <= L || R <= l) return 0;
             int no = D.size(), M = (L + R) / 2;
             D.push_back(D[o]);
             if (l <= L && R <= r) {
                 D[no].v = alter(D[o].v, val, R - L), D[no].d = alter(D[o].d, val, 1);
             } else {
-                int lc = modify_(D[o].lc, L, M), rc = modify_(D[o].rc, M, R);
+                int lc = f(D[o].lc, L, M, f), rc = f(D[o].rc, M, R, f);
                 lc&& (D[no].lc = lc), rc && (D[no].rc = rc);
                 D[no].v = op(D[D[no].lc].v, D[D[no].rc].v);
             }
             return no;
         };
-        assert(l < r && 0 <= l && r <= n), Rt.push_back(modify_(Rt.back(), 0, n));
+        assert(l < r && 0 <= l && r <= n), Rt.push_back(modify_(Rt.back(), 0, n, modify_));
     }
 
     T query(int l, int r, int t = -1) {
-        static const function<T(int, int, int, T)> query_ = [&](int o, int L, int R, T a) {
+        static const auto query_ = [&](int o, int L, int R, T a, auto f) -> T {
             T na = alter(a, D[o].d, 1);
             return l <= L && R <= r ? alter(D[o].v, a, R - L) : R <= l || r <= L ? unit :
-                   op(query_(D[o].lc, L, (L + R) / 2, na), query_(D[o].rc, (L + R) / 2, R, na));
+            op(f(D[o].lc, L, (L + R) / 2, na, f), f(D[o].rc, (L + R) / 2, R, na, f));
         };
-        return assert(l < r && 0 <= l && r <= n), query_(t < 0 ? Rt.back() : Rt.at(t), 0, n, unit);
+        return assert(l < r && 0 <= l && r <= n), query_(t < 0 ? Rt.back() : Rt.at(t), 0, n, unit, query_);
     }
 
 };

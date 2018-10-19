@@ -17,12 +17,11 @@ template <typename T> struct Matrix {
     Matrix<T> operator *(const Matrix<T>& N) const {
         assert(m() == N.n());
         Matrix<T> R(n(), N.m(), add, mul);
-        for (size_t i = 0; i < n(); ++i)
-            for (size_t j = 0; j < N.m(); ++j)
-                for (size_t k = 0; k < m(); ++k) {
-                    T tmp = mul(D[i][k], N[k][j]);
-                    R[i][j] = k == 0 ? tmp : add(R[i][j], tmp);
-                }
+        auto [im, jm, km, tmp] = tuple(n(), N.m(), m(), T());
+        for (size_t i = 0; i < im; ++i)
+            for (size_t j = 0; j < jm; ++j)
+                for (size_t k = 0; k < km; ++k)
+                    tmp = mul(D[i][k], N[k][j]), R[i][j] = k == 0 ? tmp : add(R[i][j], tmp);
         return R;
     }
     Matrix<T> pow(long long k) const {

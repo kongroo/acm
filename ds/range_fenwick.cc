@@ -4,7 +4,7 @@ using namespace std;
 
 template <typename T> struct RangeFenwick {
     vector<T> V;
-    RangeSingleFenwick(int n): V(n, T()) {}
+    RangeFenwick(int n): V(n, T()) {}
     void add(size_t l, size_t r, T x) {
         for (size_t i = l; i < V.size(); i |= i + 1) V[i] += x;
         for (size_t i = r; i < V.size(); i |= i + 1) V[i] += -x;

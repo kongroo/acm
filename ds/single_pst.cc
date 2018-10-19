@@ -18,25 +18,25 @@ template <typename T> struct SinglePST {
     }
 
     void modify(int p, T val) {
-        static const function<int(int, int, int)> modify_ = [&](int o, int a, int b) {
+        static const auto modify_ = [&](int o, int a, int b, auto f) -> int {
             int no = D.size(), M = (a + b) / 2, tmp;
             D.push_back(D[o]);
             if (a == M)  D[no].v = alter(D[o].v, val);
             else {
-                if (p < M) tmp = modify_(D[o].lc, a, M), D[no].lc = tmp;
-                else tmp = modify_(D[o].rc, M, b), D[no].rc = tmp;
+                if (p < M) tmp = f(D[o].lc, a, M, f), D[no].lc = tmp;
+                else tmp = f(D[o].rc, M, b, f), D[no].rc = tmp;
                 D[no].v = op(D[D[no].lc].v, D[D[no].rc].v);
             }
             return no;
         };
-        assert(0 <= p && p < n), Rt.push_back(modify_(Rt.back(), 0, n));
+        assert(0 <= p && p < n), Rt.push_back(modify_(Rt.back(), 0, n, modify_));
     }
     T query(int l, int r, int t = -1) {
-        static const function<T(int, int, int)> query_ = [&](int o, int a, int b) {
+        static const auto query_ = [&](int o, int a, int b, auto f) -> T {
             return a >= l && b <= r ? D[o].v : b <= l || a >= r ? unit :
-                   op(query_(D[o].lc, a, (a + b) / 2), query_(D[o].rc, (a + b) / 2, b));
+            op(f(D[o].lc, a, (a + b) / 2, f), f(D[o].rc, (a + b) / 2, b, f));
         };
-        return assert(l < r && 0 <= l && r <= n), query_(t < 0 ? Rt.back() : Rt.at(t), 0, n);
+        return assert(l < r && 0 <= l && r <= n), query_(t < 0 ? Rt.back() : Rt.at(t), 0, n, query_);
     }
 };
 

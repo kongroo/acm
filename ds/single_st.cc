@@ -18,12 +18,10 @@ template <typename T> struct SingleST {
             V[p >> 1] = op(V[(p | 1) - 1], V[p | 1]);
     }
     T query(int l, int r) {
-        assert(l < r);
         T left = unit, right = unit;
-        bool bl = false, br = false;
         for (l += n, r += n; l < r; l >>= 1, r >>= 1)
             l & 1 && (left = op(left, V[l++])), r & 1 && (right = op(V[--r], right));
-        return op(left, right);
+        return assert(l < r), op(left, right);
     }
 };
 
