@@ -2,44 +2,48 @@
 using namespace std;
 
 
-template <typename T> struct SinglePST {
-    struct Node { T v; int lc, rc; };
-    T unit; // op(unix, x) = op(x, unit) = x
+template <typename T> struct RangePST {
+    struct Node { T v, d; int lc, rc; };
+    T unit; // op(unit, x) = op(x, unit) = x, alter(x, unit, k) = x
     int n;
     vector<Node> D;
     vector<int> Rt;
-    using Func = function<T(T, T)>;
-    Func op, alter;
-    SinglePST(const vector<T>& A, T unit = T(), Func op = plus<T>(), Func alter = plus<T>()
-             ): unit(unit), n(1 << (32 - __builtin_clz(A.size()))),
-        D(n * 2, {unit, 0, 0}), Rt(1, 1),  op(op), alter(alter) {
+    function<T(T, T)> op;
+    function<T(T, T, int)> alter;
+    RangePST(const vector<T>& A, T unit = T(), function<T(T, T)> op = plus<T>(),
+    function<T(T, T, int)> alter = [](T v, T d, int k) { return v + d * k; }
+            ): unit(unit), n(1 << (32 - __builtin_clz(A.size()))),
+        D(n * 2, {unit, unit, 0, 0}), Rt(1, 1), op(op), alter(alter) {
         for (size_t i = 0; i < A.size(); i++) D[i + n].v = A[i];
-        for (int i = n - 1; i > 0; i--) D[i] = {op(D[i * 2].v, D[i * 2 + 1].v), i * 2, i * 2 + 1};
+        for (int i = n - 1; i > 0; i--) D[i] = {op(D[i * 2].v, D[i * 2 + 1].v), unit, i * 2, i * 2 + 1};
     }
 
-    void modify(int p, T val) {
+    void modify(int l, int r, T val) {
         static const function<int(int, int, int)> modify_ = [&](int o, int L, int R) {
-            int no = D.size(), M = (L + R) / 2, tmp;
+            if (r <= L || R <= l) return 0;
+            int no = D.size(), M = (L + R) / 2;
             D.push_back(D[o]);
-            if (L == M)  D[no].v = alter(D[o].v, val);
-            else {
-                if (p < M) tmp = modify_(D[o].lc, L, M), D[no].lc = tmp;
-                else tmp = modify_(D[o].rc, M, R), D[no].rc = tmp;
+            if (l <= L && R <= r) {
+                D[no].v = alter(D[o].v, val, R - L), D[no].d = alter(D[o].d, val, 1);
+            } else {
+                int lc = modify_(D[o].lc, L, M), rc = modify_(D[o].rc, M, R);
+                lc&& (D[no].lc = lc), rc && (D[no].rc = rc);
                 D[no].v = op(D[D[no].lc].v, D[D[no].rc].v);
             }
             return no;
         };
-        assert(0 <= p && p < n);
-        Rt.push_back(modify_(Rt.back(), 0, n));
+        assert(l < r && 0 <= l && r <= n), Rt.push_back(modify_(Rt.back(), 0, n));
     }
+
     T query(int l, int r, int t = -1) {
-        static const function<T(int, int, int)> query_ = [&](int o, int L, int R) {
-            return L >= l && R <= r ? D[o].v : R <= l || L >= r ? unit :
-                   op(query_(D[o].lc, L, (L + R) / 2), query_(D[o].rc, (L + R) / 2, R));
+        static const function<T(int, int, int, T)> query_ = [&](int o, int L, int R, T a) {
+            T na = alter(a, D[o].d, 1);
+            return l <= L && R <= r ? alter(D[o].v, a, R - L) : R <= l || r <= L ? unit :
+                   op(query_(D[o].lc, L, (L + R) / 2, na), query_(D[o].rc, (L + R) / 2, R, na));
         };
-        assert(l < r && 0 <= l && r <= n && t < int(Rt.size()));
-        return query_(t < 0 ? Rt.back() : Rt[t], 0, n);
+        return assert(l < r && 0 <= l && r <= n), query_(t < 0 ? Rt.back() : Rt.at(t), 0, n, unit);
     }
+
 };
 
 
@@ -52,8 +56,11 @@ int main() {
     auto B(A);
     sort(B.begin(), B.end());
     B.erase(unique(B.begin(), B.end()), B.end());
-    SinglePST<int> pst(vector<int>(B.size() + 1));
-    for (auto x : A) pst.modify(lower_bound(B.begin(), B.end(), x) - B.begin(), 1);
+    RangePST<int> pst(vector<int>(B.size() + 1));
+    for (auto x : A) {
+        int t = lower_bound(B.begin(), B.end(), x) - B.begin();
+        pst.modify(t, t + 1, 1);
+    }
     int q;
     scanf("%d", &q);
     while (q--) {

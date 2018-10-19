@@ -8,12 +8,10 @@ struct UnionFind {
     int size(int x) { return -V[root(x)]; }
     bool same(int x, int y) { return root(x) == root(y); }
     bool unite(int x, int y) {
-        x = root(x);
-        y = root(y);
+        x = root(x), y = root(y);
         if (x != y) {
             if (V[y] < V[x]) swap(x, y);
-            V[x] += V[y];
-            V[y] = x;
+            V[x] += V[y], V[y] = x;
         }
         return x != y;
     }

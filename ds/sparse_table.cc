@@ -2,8 +2,6 @@
 using namespace std;
 
 
-// 稀疏表，用于非修改RMQ问题，
-// 构建O(N*lon(N))，查询O(1)
 template <typename T> struct STable {
     vector<vector<T>> F;
     function<T(T, T)> op;
@@ -16,9 +14,8 @@ template <typename T> struct STable {
                 F[c + 1][i] = i + (1 << c) < A.size() ? op(F[c][i], F[c][i + (1 << c)]) : F[c][i];
     }
     T query(int l, int r) {
-        assert(l < r);
         int c = 31 - __builtin_clz(r - l);
-        return op(F[c][l], F[c][r - (1 << c)]);
+        return assert(l < r), op(F[c][l], F[c][r - (1 << c)]);
     }
 };
 
