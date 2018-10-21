@@ -19,8 +19,10 @@ template <typename T> struct SingleST {
     }
     T query(int l, int r) {
         T left = unit, right = unit;
-        for (l += n, r += n; l < r; l >>= 1, r >>= 1)
-            l & 1 && (left = op(left, V[l++])), r & 1 && (right = op(V[--r], right));
+        for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+            if (l & 1) left = op(left, V[l++]);
+            if (r & 1) right = op(V[--r], right);
+        }
         return assert(l < r), op(left, right);
     }
 };

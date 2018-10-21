@@ -4,32 +4,32 @@ using namespace std;
 
 namespace Primality {
 using LL = long long;
-LL MUL(LL x, LL y, LL m) {
-    LL c, s = 0;
-    for (c = x % m; y; c = (c + c) % m, y >>= 1)
+constexpr LL mmul(LL x, LL y, LL m) {
+    LL s = 0;
+    for (LL c = x % m; y; c = (c + c) % m, y >>= 1)
         if (y & 1) s = (s + c) % m;
     return s;
 }
-LL POW(LL x, LL y, LL m) {
-    LL c, s = 1;
-    for (c = x % m; y; c = MUL(c, c, m), y >>= 1)
-        if (y & 1) s = MUL(s, c, m);
+constexpr LL mpow(LL x, LL y, LL m) {
+    LL s = 1;
+    for (LL c = x % m; y; c = mmul(c, c, m), y >>= 1)
+        if (y & 1) s = mmul(s, c, m);
     return s;
 }
-bool miller_rabin(LL num) {
+constexpr bool miller_rabin(LL num) {
     if (num <= 1) return false;
     if (num <= 3) return true;
     if (~num & 1) return false;
     const int u[] = {2, 325, 9375, 28178, 450775, 9780504, 1795265022, 0};
-    LL e = num - 1, a, c = 0;
+    LL e = num - 1, a = 0, c = 0;
     while (~e & 1) e /= 2, c++;
     for (int i = 0; u[i]; i++) {
         if (num <= u[i]) return true;
-        a = POW(u[i], e, num);
+        a = mpow(u[i], e, num);
         if (a == 1) continue;
         for (int j = 1; a != num - 1; j++) {
             if (j == c) return false;
-            a = MUL(a, a, num);
+            a = mmul(a, a, num);
         }
     }
     return true;
@@ -44,7 +44,7 @@ LL pollard_rho(LL n) {
             LL u = __gcd(n - x + y, n);
             if (u > 1 && u < n) return u;
             if (++i == cnt) y = x, cnt *= 2;
-            x = (c + MUL(x, x, n)) % n;
+            x = (c + mmul(x, x, n)) % n;
         } while (x != y);
     }
     return n;
@@ -68,5 +68,6 @@ vector<LL> factorize(LL n) {
 
 
 int main() {
+    cout << Primality::miller_rabin(1e9 + 7) << endl;
     return 0;
 }

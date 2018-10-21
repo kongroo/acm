@@ -5,15 +5,14 @@ using namespace std;
 // a ^ (m-1) % m = 1, if gcd(a, m) = 1, fermat's little theorem
 // a ^ n % m = a ^ (n % phi(m)) % m, if gcd(a, m) = 1
 // a ^ n % m = a ^ (phi(m) + n % phi(m)) % m, if n >= log2(m) [or n >= phi(m)]
-long long phi(long long n) {
+constexpr long long phi(long long n) {
     auto ret = n;
     for (auto i = 2LL; i * i <= n; i++)
         if (n % i == 0) {
             while (n % i == 0) n /= i;
             ret -= ret / i;
         }
-    if (n > 1) ret -= ret / n;
-    return ret;
+    return n > 1 ? ret - ret / n : ret;
 }
 
 

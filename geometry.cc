@@ -1,47 +1,43 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Geometry Template Common
 using Num = double;
 // using Num = long long;
-const Num EPS = 1e-9, MAGIC = 2.1415927e18, PI = acos(-1);
+constexpr Num EPS = 1e-9, MAGIC = 2.1415927e18, PI = acos(-1);
 
-Num sqr(Num a) { return a * a; }
-Num cmp(Num a, Num b) { return (1 + fabs(a)) * EPS < fabs(a - b) ? a - b : 0; }
+constexpr Num sqr(Num a) { return a * a; }
+constexpr Num cmp(Num a, Num b) { return (1 + fabs(a)) * EPS < fabs(a - b) ? a - b : 0; }
 
 struct Vec { Num x, y; } NOVEC = {MAGIC, MAGIC};
 struct Ray { Vec u, v; } NORAY = {NOVEC, NOVEC};
 struct Cir { Vec u; Num r; } NOCIR = {NOVEC, MAGIC};
 
-Num sqr(Vec a) { return sqr(a.x) + sqr(a.y); }
-Num abs(Vec a) { return sqrt(sqr(a)); }
-Num cmp(Vec a, Vec b) {
-    Num at = cmp(a.x, b.x);
-    return !at ? cmp(a.y, b.y) : at;
-}
+constexpr Num sqr(Vec a) { return sqr(a.x) + sqr(a.y); }
+constexpr Num abs(Vec a) { return sqrt(sqr(a)); }
+constexpr Num cmp(Vec a, Vec b) { Num at = cmp(a.x, b.x); return !at ? cmp(a.y, b.y) : at; }
 
-Vec operator *(Num u, Vec a) { return {a.x * u, a.y * u}; }
-Vec operator *(Vec a, Num u) { return {a.x * u, a.y * u}; }
-Vec operator /(Vec a, Num u) { return {a.x / u, a.y / u}; }
-Vec operator +(Vec a, Vec b) { return {a.x + b.x, a.y + b.y}; }
-Vec operator -(Vec a, Vec b) { return {a.x - b.x, a.y - b.y}; }
-Num operator *(Vec a, Vec b) { return cmp(a.x * b.y, +a.y * b.x); }
-Num operator %(Vec a, Vec b) { return cmp(a.x * b.x, -a.y * b.y); }
-bool operator <(Vec a, Vec b) { return cmp(a, b) < 0; }
-bool operator==(Vec a, Vec b) { return cmp(a, b) == 0; }
-bool between(Num a, Num b, Num c) { return min(b, c) <= a && a <= max(b, c); }
+constexpr Vec operator *(Num u, Vec a) { return {a.x * u, a.y * u}; }
+constexpr Vec operator *(Vec a, Num u) { return {a.x * u, a.y * u}; }
+constexpr Vec operator /(Vec a, Num u) { return {a.x / u, a.y / u}; }
+constexpr Vec operator +(Vec a, Vec b) { return {a.x + b.x, a.y + b.y}; }
+constexpr Vec operator -(Vec a, Vec b) { return {a.x - b.x, a.y - b.y}; }
+constexpr Num operator *(Vec a, Vec b) { return cmp(a.x * b.y, +a.y * b.x); }
+constexpr Num operator %(Vec a, Vec b) { return cmp(a.x * b.x, -a.y * b.y); }
+constexpr bool operator <(Vec a, Vec b) { return cmp(a, b) < 0; }
+constexpr bool operator==(Vec a, Vec b) { return cmp(a, b) == 0; }
+constexpr bool between(Num a, Num b, Num c) { return min(b, c) <= a && a <= max(b, c); }
 
 
 
 // Care for overflow
-Vec intersect(Ray a, const Ray& b) {
+constexpr Vec intersect(Ray a, const Ray& b) {
     Vec t = a.u - a.v, s = b.u - b.v;
     Num o = s * t;
     if (!o) return NOVEC;
     return a.u + (a.u - b.u) * s * t / o;
 }
 
-int relation(Vec p, Ray l) {
+constexpr int relation(Vec p, Ray l) {
     if ((p - l.u) * (p - l.v)) return 0;
     return between(p.x, l.u.x, l.u.y) && between(p.y, l.u.y, l.v.y) ? 2 : 1;
 }

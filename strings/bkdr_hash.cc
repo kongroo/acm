@@ -2,7 +2,7 @@
 using namespace std;
 
 
-template <typename T> auto bkdr_hash(const T& S) {
+template <typename T> constexpr auto bkdr_hash(const T& S) {
     auto res1 = 0ULL, res2 = 0ULL, seed1 = 131ULL, seed2 = 1313ULL;
     for (auto c : S) res1 = res1 * seed1 + c, res2 = res2 * seed2 + c;
     return res1 * res2;

@@ -43,10 +43,7 @@ template <typename T> struct MaxFlow {
             const Edge& e = E[id];
             if (e.c - e.f > eps && D[e.v] == D[e.u] - 1) {
                 T t = dfs(e.v, min(e.c - e.f, w));
-                if (t > eps) {
-                    E[id].f += t, E[id ^ 1].f -= t;
-                    return t;
-                }
+                if (t > eps) return E[id].f += t, E[id ^ 1].f -= t, t;
             }
         }
         return T();

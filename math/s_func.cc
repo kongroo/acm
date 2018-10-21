@@ -3,7 +3,7 @@ using namespace std;
 
 
 // Sum of divisors, partial multiplicative function
-long long s_func(long long n) {
+constexpr long long s_func(long long n) {
     auto ret = 1LL;
     for (auto i = 2LL; i * i <= n; i++) {
         if (n % i == 0) {
@@ -12,8 +12,7 @@ long long s_func(long long n) {
             ret *= sum;
         }
     }
-    if (n > 1) ret *= n + 1;
-    return ret;
+    return n > 1 ? ret * (n + 1) : ret;
 }
 
 
@@ -24,7 +23,7 @@ int main() {
     while (t--) {
         int n;
         scanf("%d", &n);
-        printf("%d\n", int(sFunc(n) - n));
+        printf("%d\n", int(s_func(n) - n));
     }
     return 0;
 }

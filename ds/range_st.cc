@@ -33,20 +33,68 @@ template <typename T> struct RangeST {
     void modify(int l, int r, T val) {
         assert(l < r), push(l, l + 1), push(r - 1, r);
         int l0 = l, r0 = r, k = 1;
-        for (l += n, r += n; l < r; l >>= 1, r >>= 1, k <<= 1)
-            l & 1 && apply(l++, val, k), r & 1 && apply(--r, val, k);
+        for (l += n, r += n; l < r; l >>= 1, r >>= 1, k <<= 1) {
+            if (l & 1) apply(l++, val, k);
+            if (r & 1) apply(--r, val, k);
+        }
         build(l0, l0 + 1), build(r0 - 1, r0);
     }
     T query(int l, int r) {
         assert(l < r), push(l, l + 1), push(r - 1, r);
         T left = unit, right = unit;
-        for (l += n, r += n; l < r; l >>= 1, r >>= 1)
-            l & 1 && (left = op(left, V[l++])), r & 1 && (right = op(V[--r], right));
+        for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+            if (l & 1) left = op(left, V[l++]);
+            if (r & 1) right = op(V[--r], right);
+        }
         return op(left, right);
     }
 };
 
 
 int main() {
+    using LL = long long;
+    int n;
+    scanf("%d", &n);
+    vector<tuple<int, int, int, int>> A;
+    const int Bias = 1e6;
+    FI(i, 1, n) {
+        int a, b, c, d;
+        scanf("%d%d%d%d", &a, &b, &c, &d);
+        a += Bias, b += Bias, c += Bias, d += Bias;
+        A.emplace_back(a, b, c, d);
+    }
+    auto solve = [&]() {
+        vector<tuple<int, int, int, int>> E;
+        for (auto& t : A) {
+            int a, b, c, d;
+            tie(a, b, c, d) = t;
+            E.emplace_back(a, -1, b, d);
+            E.emplace_back(c, 1, b, d);
+        }
+        sort(E.begin(), E.end());
+        RangeST<int> st(vector<int>(Bias * 2 + 1));
+        auto calc = [&](int type) {
+            LL ans = 0;
+            for (auto& e : E) {
+                int t, l, r;
+                tie(ignore, t, l, r) = e;
+                if (t == type) ans += r - l + 1, st.modify(l, r + 1, 1);
+                else st.modify(l, r + 1, -1), ans -= st.query(l, r + 1);
+            }
+            return ans;
+        };
+        LL ans = calc(-1);
+        reverse(E.begin(), E.end());
+        ans += calc(1);
+        return ans;
+    };
+    LL ans = solve();
+    for (auto& t : A) {
+        int a, b, c, d;
+        tie(a, b, c, d) = t;
+        t = {b, a, d, c};
+    }
+    ans += solve();
+    printf("%lld\n", ans);
     return 0;
 }

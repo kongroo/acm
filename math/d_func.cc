@@ -3,7 +3,7 @@ using namespace std;
 
 
 // Cnt of divisors, partial multiplicative function
-int d_func(long long n) {
+constexpr int d_func(long long n) {
     int ret = 1;
     for (auto i = 2LL; i * i <= n; i++) {
         if (n % i == 0) {
@@ -12,8 +12,7 @@ int d_func(long long n) {
             ret *= cnt + 1;
         }
     }
-    if (n > 1) ret *= 2;
-    return ret;
+    return n > 1 ? ret * 2 : ret;
 }
 
 
@@ -24,6 +23,6 @@ int main() {
     while (T--) {
         int a, b;
         scanf("%d%d", &a, &b);
-        printf("%d\n", dFunc(__gcd(a, b)));
+        printf("%d\n", d_func(__gcd(a, b)));
     }
 }

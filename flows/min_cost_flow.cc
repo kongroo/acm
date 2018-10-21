@@ -15,10 +15,8 @@ template <typename T> struct MinCostFlow {
     void reduce() { for (auto& e : E) e.c -= e.f; }
     void add_edge(int u, int v, T cap, T cost) {
         assert(0 <= u && u < n && 0 <= v && v < n);
-        G[u].push_back(E.size());
-        E.push_back({u, v, cap, cost, T()});
-        G[v].push_back(E.size());
-        E.push_back({v, u, 0, -cost, T()});
+        G[u].push_back(E.size()), E.push_back({u, v, cap, cost, T()});
+        G[v].push_back(E.size()), E.push_back({v, u, 0, -cost, T()});
     }
     T min_cost_flow(T f = -1) {
         if (f < 0) f = INF;
