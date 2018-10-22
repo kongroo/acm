@@ -21,8 +21,8 @@ template <typename T> struct RangeST {
         if (p < n) D[p] = B[p] ? alter(D[p], val, 1) : val, B[p] = true;
     }
     void build(int l, int r) {
-        l += n, r += n - 1;
-        for (int k = 2; l > 1; k <<= 1) {
+        int k = 2;
+        for (l += n, r += n - 1; l > 1; k <<= 1) {
             l >>= 1, r >>= 1;
             for (int i = r; i >= l; i--) calc(i, k);
         }
