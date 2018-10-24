@@ -3,17 +3,17 @@ using namespace std;
 
 
 template <typename T> struct SingleST {
-    size_t n;
+    int n;
     vector<T> V;
     using Func = function<T(T, T)>;
-    Func op, alter;
-    SingleST(const vector<T>& A, Func op = plus<T>(), Func alter = plus<T>()
-            ): n(A.size()), V(n * 2), op(op), alter(alter) {
+    Func op, al;
+    SingleST(const vector<T>& A, Func op = plus<T>(), Func al = plus<T>()
+            ): n(A.size()), V(n * 2), op(op), al(al) {
         copy(A.begin(), A.end(), V.begin() + n);
-        for (int i = (int)n - 1; i > 0; i--) V[i] = op(V[i << 1], V[i << 1 | 1]);
+        for (int i = n - 1; i > 0; i--) V[i] = op(V[i << 1], V[i << 1 | 1]);
     }
     void modify(int p, T val) {
-        for (p += n, V[p] = alter(V[p], val); p > 1; p >>= 1)
+        for (p += n, V[p] = al(V[p], val); p > 1; p >>= 1)
             V[p >> 1] = op(V[(p | 1) - 1], V[p | 1]);
     }
     T query(int l, int r) {
@@ -29,6 +29,7 @@ template <typename T> struct SingleST {
 };
 
 
+// 51Nod. 1208
 int main() {
     return 0;
 }

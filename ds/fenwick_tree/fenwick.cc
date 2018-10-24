@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 template <typename T> struct Fenwick {
     vector<T> V;
     Fenwick(int n): V(n) {}
@@ -11,5 +12,10 @@ template <typename T> struct Fenwick {
 
 
 int main() {
+    int n = 30;
+    using B = bitset<6>;
+    for (int i = 0; i <= n; i++) {
+        cout << i << ' ' << B(i) << ' ' << B(i | (i + 1)) << ' ' << B((i & (i + 1)) - 1) << endl;
+    }
     return 0;
 }

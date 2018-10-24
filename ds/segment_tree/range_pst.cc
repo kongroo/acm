@@ -4,16 +4,16 @@ using namespace std;
 
 template <typename T> struct RangePST {
     struct Node { T v, d; int lc, rc; };
-    T unit; // op(unit, x) = op(x, unit) = x, alter(x, unit, k) = x
+    T unit; // op(unit, x) = op(x, unit) = x, al(x, unit, k) = x
     int n;
     vector<Node> D;
     vector<int> Rt;
     function<T(T, T)> op;
-    function<T(T, T, int)> alter;
+    function<T(T, T, int)> al;
     RangePST(const vector<T>& A, T unit = T(), function<T(T, T)> op = plus<T>(),
-    function<T(T, T, int)> alter = [](T v, T d, int k) { return v + d * k; }
+    function<T(T, T, int)> al = [](T v, T d, int k) { return v + d * k; }
             ): unit(unit), n(1 << (32 - __builtin_clz(A.size()))),
-        D(n * 2, {unit, unit, 0, 0}), Rt(1, 1), op(op), alter(alter) {
+        D(n * 2, {unit, unit, 0, 0}), Rt(1, 1), op(op), al(al) {
         for (size_t i = 0; i < A.size(); i++) D[i + n].v = A[i];
         for (int i = n - 1; i > 0; i--) D[i] = {op(D[i * 2].v, D[i * 2 + 1].v), unit, i * 2, i * 2 + 1};
     }
@@ -24,7 +24,7 @@ template <typename T> struct RangePST {
             int no = D.size(), M = (L + R) / 2;
             D.push_back(D[o]);
             if (l <= L && R <= r) {
-                D[no].v = alter(D[o].v, val, R - L), D[no].d = alter(D[o].d, val, 1);
+                D[no].v = al(D[o].v, val, R - L), D[no].d = al(D[o].d, val, 1);
             } else {
                 int lc = f(D[o].lc, L, M, f), rc = f(D[o].rc, M, R, f);
                 lc&& (D[no].lc = lc), rc && (D[no].rc = rc);
@@ -37,8 +37,8 @@ template <typename T> struct RangePST {
 
     T query(int l, int r, int t = -1) {
         static const auto query_ = [&](int o, int L, int R, T a, auto f) -> T {
-            T na = alter(a, D[o].d, 1);
-            return l <= L && R <= r ? alter(D[o].v, a, R - L) : R <= l || r <= L ? unit :
+            T na = al(a, D[o].d, 1);
+            return l <= L && R <= r ? al(D[o].v, a, R - L) : R <= l || r <= L ? unit :
             op(f(D[o].lc, L, (L + R) / 2, na, f), f(D[o].rc, (L + R) / 2, R, na, f));
         };
         return assert(l < r && 0 <= l && r <= n), query_(t < 0 ? Rt.back() : Rt.at(t), 0, n, unit, query_);

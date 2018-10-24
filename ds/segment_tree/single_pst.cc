@@ -9,10 +9,10 @@ template <typename T> struct SinglePST {
     vector<Node> D;
     vector<int> Rt;
     using Func = function<T(T, T)>;
-    Func op, alter;
-    SinglePST(const vector<T>& A, T unit = T(), Func op = plus<T>(), Func alter = plus<T>()
+    Func op, al;
+    SinglePST(const vector<T>& A, T unit = T(), Func op = plus<T>(), Func al = plus<T>()
              ): unit(unit), n(1 << (32 - __builtin_clz(A.size()))),
-        D(n * 2, {unit, 0, 0}), Rt(1, 1),  op(op), alter(alter) {
+        D(n * 2, {unit, 0, 0}), Rt(1, 1),  op(op), al(al) {
         for (size_t i = 0; i < A.size(); i++) D[i + n].v = A[i];
         for (int i = n - 1; i > 0; i--) D[i] = {op(D[i * 2].v, D[i * 2 + 1].v), i * 2, i * 2 + 1};
     }
@@ -21,7 +21,7 @@ template <typename T> struct SinglePST {
         static const auto modify_ = [&](int o, int a, int b, auto f) -> int {
             int no = D.size(), M = (a + b) / 2, tmp;
             D.push_back(D[o]);
-            if (a == M)  D[no].v = alter(D[o].v, val);
+            if (a == M)  D[no].v = al(D[o].v, val);
             else {
                 if (p < M) tmp = f(D[o].lc, a, M, f), D[no].lc = tmp;
                 else tmp = f(D[o].rc, M, b, f), D[no].rc = tmp;
