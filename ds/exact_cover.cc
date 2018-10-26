@@ -4,27 +4,28 @@ using namespace std;
 
 // r and c are 1-indexed
 struct DLX {
-    using PII = pair<int, int>;
     int n, m, sz;
-    vector<int> V[6], S, &R, &U, &L, &D, &I, &J;
-    DLX(int n, int m, vector<PII> P) : n(n), m(m), sz(0), S(m + 1),
-        R(V[0]), U(V[1]), L(V[2]), D(V[3]), I(V[4]), J(V[5])  {
+    vector<int> S, R, U, L, D, I, J;
+    DLX(int n, int m, vector<pair<int, int>> P) : n(n), m(m), sz(0), S(m + 1) {
         assert(n > 0 && m > 0);
         sort(P.begin(), P.end());
-        add({1, 0, m, 0, 0, 0});
-        for (int i = 1; i <= m; i++) add({(i + 1) % (m + 1), i, i - 1, i, 0, i});
+        add(1, 0, m, 0, 0, 0);
+        for (int i = 1; i <= m; i++) add((i + 1) % (m + 1), i, i - 1, i, 0, i);
         sz = m + 1;
         vector<int> C(m + 1), F(n + 1);
         iota(C.begin(), C.end(), 0);
         for (auto p : P) {
             int r = p.first, c = p.second;
             assert(0 < r && r <= n && 0 < c && c <= m);
-            if (!F[r]) add({sz, C[c], sz, c, r, c}), F[r] = sz;
-            else add({F[r], C[c], sz - 1, c, r, c});
+            if (!F[r]) add(sz, C[c], sz, c, r, c), F[r] = sz;
+            else add(F[r], C[c], sz - 1, c, r, c);
             L[R[sz]] = R[L[sz]] = U[D[sz]] = D[U[sz]] =  sz, C[c] = sz++, S[c]++;
         }
     }
-    void add(const vector<int> &A) { for (int i = 0; i < 6; i++) V[i].push_back(A.at(i)); }
+    void add(int r, int u, int l, int d, int i, int j) {
+        R.push_back(r), U.push_back(u), L.push_back(l), \
+        D.push_back(d), I.push_back(i), J.push_back(j);
+    }
     void remove(int c) {
         L[R[c]] = L[c],  R[L[c]] = R[c];
         for (int i = D[c]; i != c; i = D[i])
@@ -37,28 +38,26 @@ struct DLX {
                 U[D[j]] = D[U[j]] = j, ++S[J[j]];
         L[R[c]] = R[L[c]] = c;
     }
-    vector<vector<int>> ans(int n_ans = 1, vector<int> Used = {}) {
-        for (auto c : set<int>(Used.begin(), Used.end())) remove(c);
+    vector<vector<int>> ans(int n_ans = 1, const vector<int> &Used = {}) {
+        for (auto c : Used) assert(1 <= c && c <= m), remove(c);
         vector<vector<int>> Ans;
         vector<int> Tmp;
         function<void()> dfs = [&]() {
             if (n_ans < 1) return;
-            if (!R[0]) { n_ans--; Ans.emplace_back(Tmp); return ;}
+            if (!R[0]) { n_ans--; Ans.emplace_back(Tmp); return; }
             int c = R[0];
             for (int i = c; i; i = R[i]) if (S[i] < S[c]) c = i;
             remove(c);
             for (int i = D[c]; i != c; i = D[i]) {
                 Tmp.push_back(I[i]);
                 for (int j = R[i]; j != i; j = R[j]) remove(J[j]);
-                dfs();
+                dfs(), Tmp.pop_back();
                 if (n_ans < 1) return;
-                Tmp.pop_back();
                 for (int j = L[i]; j != i; j = L[j]) restore(J[j]);
             }
             restore(c);
         };
-        dfs();
-        return Ans;
+        return dfs(), Ans;
     }
 };
 
