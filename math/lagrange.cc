@@ -11,11 +11,11 @@ struct Lagrange {
         for (int i = 2; i < n; i++)
             Inv[i] = (m - m / i) * Inv[m % i] % m, Den[i] = Den[i - 1] * Inv[i] % m;
     }
-    LL inv(LL x) { return x < n ? Inv[x] : x >= m ? inv(x % m) : (m - m / x) * inv(m % x) % m; }
-    inline LL sub(LL x, LL y) { return (x - y + m) % m; }
-    inline LL add(LL x, LL y) { return (x + y) % m; }
+    constexpr LL inv(LL x) { return x < 2 ? x : x >= m ? inv(x % m) : (m - m / x) * inv(m % x) % m; }
+    constexpr LL sub(LL x, LL y) { return (x - y + m) % m; }
+    constexpr LL add(LL x, LL y) { return (x + y) % m; }
     // O(k^2), naive
-    template <typename T> LL interp(const vector<T> &X, const vector<T> &Y, LL x, LL m = 1e9 + 7) {
+    template <typename T> LL interp(const vector<T> &X, const vector<T> &Y, LL x) {
         LL ans = 0;
         for (size_t i = 0; i < X.size(); i++) {
             LL num = Y.at(i), den = 1;
@@ -26,7 +26,7 @@ struct Lagrange {
         return ans;
     }
     // O(k), for X is [0, 1, ..., k]
-    template <typename T> LL interp_fast(const vector<T> &Y, LL x, LL m = 1e9 + 7) {
+    template <typename T> LL interp_fast(const vector<T> &Y, LL x) {
         int k = (int)Y.size() - 1;
         assert(k < n);
         if (x <= k) return Y[x];
