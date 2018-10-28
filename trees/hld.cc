@@ -1,19 +1,15 @@
-#ifndef DS_TREES_HLD
-#define DS_TREES_HLD
-
-#include <cassert>
-#include <functional>
-#include <vector>
+#include <bits/stdc++.h>
+using namespace std;
 
 
 template <typename T, class ST> struct HLDPoint {
     size_t n;
-    std::vector<int> Size, Dep, Fa, Son, Top, P;
+    vector<int> Size, Dep, Fa, Son, Top, P;
     ST* st;
 
-    HLDPoint(const std::vector<std::vector<int>>& G, const std::vector<T>& A, int root): n(G.size()),
+    HLDPoint(const vector<vector<int>>& G, const vector<T>& A, int root): n(G.size()),
         Size(n, -1), Dep(n, -1), Fa(n, -1), Son(n, -1), Top(n, -1), P(n, -1) {
-        std::function<void(int, int, int)> dfs1 = [&](int u, int p, int dep) {
+        function<void(int, int, int)> dfs1 = [&](int u, int p, int dep) {
             Size[u] = 1;
             Dep[u] = dep;
             Fa[u] = p;
@@ -27,7 +23,7 @@ template <typename T, class ST> struct HLDPoint {
         };
         dfs1(root, -1, 0);
         int ts = 0;
-        std::function<void(int, int, int)> dfs2 = [&](int u, int p, int t) {
+        function<void(int, int, int)> dfs2 = [&](int u, int p, int t) {
             P[u] = ts++;
             Top[u] = t;
             if (Son[u] == -1) return;
@@ -37,7 +33,7 @@ template <typename T, class ST> struct HLDPoint {
             }
         };
         dfs2(root, -1, root);
-        std::vector<T> B(ts);
+        vector<T> B(ts);
         for (size_t i = 0; i < A.size(); i++) {
             if (P[i] != -1) {
                 B[P[i]] = A[i];
@@ -56,4 +52,3 @@ template <typename T, class ST> struct HLDPoint {
     }
 };
 
-#endif /* ifndef DS_TREES_HLD */

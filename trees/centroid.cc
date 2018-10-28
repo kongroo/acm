@@ -1,29 +1,27 @@
-#include <functional>
-#include <vector>
+#include <bits/stdc++.h>
+using namespace std;
 
-int find_centroid(const std::vector<std::vector<int>>& G, int root = 0,
-                 const std::vector<bool>& Dead = std::vector<bool>()) {
-    static std::vector<int> size(G.size());
-    std::function<void (int, int)> calcSize = [&](int u, int p) {
+
+int find_centroid(const vector<vector<int>> &G, int root = 0,
+                  const vector<bool> &Dead = vector<bool>()) {
+    static vector<int> size(G.size());
+    function<void (int, int)> calcSize = [&](int u, int p) {
         size[u] = 1;
-        for (auto v : G[u]) if (v != p && (Dead.empty() || !Dead[v])) {
-                calcSize(v, u);
-                size[u] += size[v];
-            }
+        for (auto v : G[u]) if (v != p && (Dead.empty() || !Dead[v]))
+                calcSize(v, u), size[u] += size[v];
     };
     calcSize(root, -1);
     int n = size[root];
-    std::function<int (int, int)> dfs = [&](int u, int p) {
-        for (auto v : G[u]) if (v != p && (Dead.empty() || !Dead[v])) {
+    function<int (int, int)> dfs = [&](int u, int p) {
+        for (auto v : G[u]) if (v != p && (Dead.empty() || !Dead[v]))
                 if (size[v] > n / 2) return dfs(v, u);
-            }
         return u;
     };
     return dfs(root, -1);
 }
 
 /*
-vector<LL> solve(const std::vector<std::vector<int>>& G, const std::vector<int> B) {
+vector<LL> solve(const vector<vector<int>>& G, const vector<int> B) {
     vector<LL> Ans(G.size());
     vector<bool> Dead(G.size());
     vector<LL> Cnt(1 << 20, 0);
