@@ -5,10 +5,8 @@ using namespace std;
 namespace Primality {
 using LL = long long;
 constexpr LL mmul(LL x, LL y, LL m) {
-    LL s = 0;
-    for (LL c = x % m; y; c = (c + c) % m, y >>= 1)
-        if (y & 1) s = (s + c) % m;
-    return s;
+    LL ret = x * y - (LL)((long double)x * y / m + 0.5) * m;
+    return ret < 0 ? ret + m : ret;
 }
 constexpr LL mpow(LL x, LL y, LL m) {
     LL s = 1;

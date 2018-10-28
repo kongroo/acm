@@ -2,11 +2,11 @@
 using namespace std;
 
 
-struct Combine {
+struct CombineSmall {
     using LL = long long;
     LL m;
     vector<vector<LL>> F;
-    Combine(int n, LL mod) : m(mod), F(n + 1) {
+    CombineSmall(int n, LL mod) : m(mod), F(n + 1) {
         assert(n <= 5000 && mod > 1);
         for (int i = 1; i <= n; i++) F[i].resize(i + 1), F[i][0] = 1;
     }

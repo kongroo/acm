@@ -13,20 +13,22 @@ template <typename T> void arrange(vector<T> &A) {
     }
 }
 template <typename T> void fourier(vector<complex<T>> &A, int inv) {
-    assert((inv == 1 || inv == -1) && (is_same<T, double>::value || is_same<T, long double>::value));
+    assert((inv == 1 || inv == -1) && is_floating_point<T>::value);
     int n = 1 << (32 - __builtin_clz(A.size() - 1));
     A.resize(n), arrange(A);
+    vector<complex<T>> W(n >> 1, {1, 0});
     for (int l = 1; l < n; l <<= 1) {
-        complex<T> wl(cos(inv * PI / l), sin(inv * PI / l)), w(1, 0), t;
-        for (int i = 0; i < l; i++, w *= wl)
+        complex<T> wl(cos(inv * PI / l), sin(inv * PI / l)), t;
+        for (int i = l - 2; i >= 0; i -= 2) W[i] = W[i >> 1];
+        for (int i = 1; i < l; i += 2) W[i] = W[i - 1] * wl;
+        for (int i = 0; i < l; i++)
             for (int s = 0; s < n; s += l + l)
-                t = w * A[s + i + l], A[s + i + l] = A[s + i] - t, A[s + i] += t;
+                t = W[i] * A[s + i + l], A[s + i + l] = A[s + i] - t, A[s + i] += t;
     }
     if (inv == -1) for (int i = 0; i < n; i++) A[i] /= n;
 }
 template <typename T> vector<T> multiply(const vector<T> &A, const vector<T> &B) {
-    bool flag = is_same<T, double>::value || is_same<T, long double>::value;
-    double bias = flag ? 0 : 0.5;
+    double bias = is_integral<T>::value ? 0.5 : 0;
     int s = A.size() + B.size() - 1;
     vector<complex<double>> U, V; // or long double
     for (auto x : A) U.emplace_back(x, 0);
