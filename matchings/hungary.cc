@@ -2,29 +2,22 @@
 using namespace std;
 
 
-vector<int> hungary(const vector<vector<int>>& G) {
-    vector<int> Match(G.size(), -1);
-    vector<char> Vis(G.size(), 0);
+vector<int> hungary(const vector<vector<int>> &G) {
+    vector<int> M(G.size(), -1);
+    vector<char> B(G.size(), 0);
     function<bool(int, int)> dfs = [&](int u, int p) -> bool {
-        Vis[u] = 1;
-        if (Match[u] < 0 && p != -1) return true;
-        if (Match[u] >= 0 && Match[u] != p) return dfs(Match[u], u);
-        for (auto v : G[u]) {
-            if (v == p || Vis[v]) continue;
-            if (dfs(v, u)) {
-                Match[u] = v;
-                Match[v] = u;
-                return true;
-            }
-        }
-        return false;
+        B[u] = 1;
+        if (M[u] < 0 && p != -1) return true;
+        if (M[u] >= 0 && M[u] != p) return dfs(M[u], u);
+        for (auto v : G[u]) if (v != p && !B[v] && dfs(v, u))
+                return M[u] = v, M[v] = u, 1;
+        return 0;
     };
-    for (size_t i = 0; i < G.size(); ++i) {
-        fill(Vis.begin(), Vis.end(), 0);
-        if (Match[i] < 0) dfs(i, -1);
-    }
-    return Match;
+    for (size_t i = 0; i < G.size(); ++i)
+        if (M[i] < 0) fill(B.begin(), B.end(), 0), dfs(i, -1);
+    return M;
 }
+
 
 int main() {
     return 0;
