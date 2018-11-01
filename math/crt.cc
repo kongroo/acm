@@ -3,10 +3,10 @@ using namespace std;
 
 
 // x % M[i] = A[i], M[i] coprime
-long long crt(const vector<int>& A, const vector<int>& M) {
+long long crt(const vector<int> &A, const vector<int> &M) {
     assert(A.size() == M.size());
     auto inv = [&](int x, int p, auto inv) constexpr -> int {
-        return x > 1 ? inv(p % x, p, inv) * 1LL * (p - p / x) % p : x;
+        return  x > p ? inv(x % p, p, inv) : x > 1 ? inv(p % x, p, inv) * 1LL * (p - p / x) % p : x;
     };
     auto m = 1LL, ans = 0LL;
     for (auto x : M) m *= x;

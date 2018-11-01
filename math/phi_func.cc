@@ -8,10 +8,7 @@ using namespace std;
 constexpr long long phi(long long n) {
     auto ret = n;
     for (auto i = 2LL; i * i <= n; i++)
-        if (n % i == 0) {
-            while (n % i == 0) n /= i;
-            ret -= ret / i;
-        }
+        if (n % i == 0) { while (n % i == 0) n /= i; ret -= ret / i; }
     return n > 1 ? ret - ret / n : ret;
 }
 

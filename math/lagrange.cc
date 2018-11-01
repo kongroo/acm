@@ -4,14 +4,14 @@ using namespace std;
 
 struct Lagrange {
     using LL = long long;
-    LL n, m;
+    int n, m;
     vector<LL> Inv, Den;
-    Lagrange(LL n, LL m): n(n), m(m), Inv(n, 1), Den(n, 1) {
+    Lagrange(int n, int m): n(n), m(m), Inv(n, 1), Den(n, 1) {
         assert(n > 1);
         for (int i = 2; i < n; i++)
             Inv[i] = (m - m / i) * Inv[m % i] % m, Den[i] = Den[i - 1] * Inv[i] % m;
     }
-    constexpr LL inv(LL x) { return x < 2 ? x : x >= m ? inv(x % m) : (m - m / x) * inv(m % x) % m; }
+    constexpr LL inv(LL x) { return x < 2 ? x : (m - m / x) * inv(m % x) % m; }
     constexpr LL sub(LL x, LL y) { return (x - y + m) % m; }
     constexpr LL add(LL x, LL y) { return (x + y) % m; }
     // O(k^2), naive

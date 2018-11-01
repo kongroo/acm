@@ -5,7 +5,7 @@ using namespace std;
 template <typename T> struct STable {
     vector<vector<T>> F;
     function<T(T, T)> op;
-    STable(const vector<T>& A,
+    STable(const vector<T> &A,
     function<T(T, T)> op = [](T a, T b) { return min(a, b); }
           ): F(32 - __builtin_clz(A.size()), vector<T>(A.size())), op(op)  {
         for (size_t i = 0; i < A.size(); i++) F[0][i] = A[i];
@@ -20,11 +20,19 @@ template <typename T> struct STable {
 };
 
 
+// 51Nod. 1249
 int main() {
-    using LL = long long;
-    vector<LL> A{1, -1, 2, 3, 4, 5, 3, 2, 3, 5, 10, 1};
-    STable<LL> rmq(A, [](int a, int b) { return max(a, b); });
-    cout << rmq.query(1, 2) << endl;
-    cout << rmq.query(4, 6) << endl;
-    cout << rmq.query(0, 12) << endl;
+    int n;
+    scanf("%d", &n);
+    vector<int> A(n + 1);
+    for (int i = 1; i <= n; i++) scanf("%d", &A[i]);
+    STable<int> st(A, [](int a, int b) { return max(a, b); });
+    deque<int> D;
+    auto ans = 0LL;
+    for (int i = 1; i <= n; i++) {
+        while (!D.empty() && A[i] < A[D.back()]) D.pop_back();
+        while (!D.empty() && st.query(D.front(), i) > A[i]) D.pop_front();
+        D.push_back(i), ans += D.size();
+    }
+    printf("%lld\n", ans);
 }

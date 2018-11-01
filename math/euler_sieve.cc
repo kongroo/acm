@@ -2,7 +2,6 @@
 using namespace std;
 
 
-
 struct Sieve {
     vector<int> L, Phi, P;
     Sieve(int n): L(n), Phi(n, 1) {
