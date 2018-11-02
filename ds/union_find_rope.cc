@@ -10,7 +10,7 @@ struct PUnionFind {
     int root(int x, int t = -1) {
         if (t < 0) t = (int)F.size() - 1;
         int p = F.at(t).at(x), a;
-        if (p == x) return x;
+        if (p < 0 || p == x) return x;
         else { a = root(p, t); if (a != p) F[t].replace(x, a); return a; }
     }
     int size(int x, int t = -1) { return -(t < 0 ? F.back() : F.at(t)).at(x); }
