@@ -15,14 +15,14 @@ struct PUnionFind {
     }
     int size(int x, int t = -1) { return -(t < 0 ? F.back() : F.at(t)).at(x); }
     bool same(int x, int y, int t = -1) { return root(x, t) == root(y, t); }
-    bool unite(int x, int y) {
-        F.emplace_back(F.back());
+    bool unite(int x, int y, int t = -1) {
+        if (t < 0) t = F.size(), F.emplace_back(F.back());
         x = root(x), y = root(y);
         if (x != y) {
             int sx = size(x), sy = size(y);
             if (sy > sx) swap(x, y);
-            F.back().replace(x, -sx - sy);
-            F.back().replace(y, x);
+            F.at(t).replace(x, -sx - sy);
+            F.at(t).replace(y, x);
         }
         return x != y;
     }
@@ -30,5 +30,16 @@ struct PUnionFind {
 
 
 int main() {
+    PUnionFind uf(100);
+    uf.unite(1, 2);
+    uf.unite(2, 3);
+    uf.unite(2, 5);
+    uf.unite(1, 4, 0);
+    uf.unite(1, 4, 2);
+    cout << uf.same(1, 4) << endl;
+    cout << uf.same(1, 4, 0) << endl;
+    cout << uf.same(1, 4, 1) << endl;
+    cout << uf.same(1, 4, 2) << endl;
+    cout << uf.same(1, 4, 3) << endl;
     return 0;
 }
