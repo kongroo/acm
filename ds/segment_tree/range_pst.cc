@@ -5,20 +5,22 @@ using namespace std;
 template <typename T> struct RangePST {
     struct Node { T v, d; int lc, rc; };
     T unit; // op(unit, x) = op(x, unit) = x, al(x, unit, k) = x
-    int n;
+    const int n;
     vector<Node> D;
-    vector<int> Rt;
+    vector<int> R;
     function<T(T, T)> op;
     function<T(T, T, int)> al;
-    RangePST(const vector<T>& A, T unit = T(), function<T(T, T)> op = plus<T>(),
+    RangePST(const vector<T> &A, T unit = T(), function<T(T, T)> op = plus<T>(),
     function<T(T, T, int)> al = [](T v, T d, int k) { return v + d * k; }
             ): unit(unit), n(1 << (32 - __builtin_clz(A.size()))),
-        D(n * 2, {unit, unit, 0, 0}), Rt(1, 1), op(op), al(al) {
+        D(n * 2, {unit, unit, 0, 0}), R(1, 1), op(op), al(al) {
         for (size_t i = 0; i < A.size(); i++) D[i + n].v = A[i];
         for (int i = n - 1; i > 0; i--) D[i] = {op(D[i * 2].v, D[i * 2 + 1].v), unit, i * 2, i * 2 + 1};
     }
 
-    void modify(int l, int r, T val) {
+    int get_ver(int t) { return t < 0 ? t + (int)R.size() : t; }
+    void new_ver(int t = -1) { R.push_back(R[get_ver(t)]); }
+    void modify(int l, int r, T val, int t = -1) {
         static const auto modify_ = [&](int o, int L, int R, auto f) {
             if (r <= L || R <= l) return 0;
             int no = D.size(), M = (L + R) / 2;
@@ -27,12 +29,12 @@ template <typename T> struct RangePST {
                 D[no].v = al(D[o].v, val, R - L), D[no].d = al(D[o].d, val, 1);
             } else {
                 int lc = f(D[o].lc, L, M, f), rc = f(D[o].rc, M, R, f);
-                lc&& (D[no].lc = lc), rc && (D[no].rc = rc);
+                lc &&(D[no].lc = lc), rc && (D[no].rc = rc);
                 D[no].v = op(D[D[no].lc].v, D[D[no].rc].v);
             }
             return no;
         };
-        assert(l < r && 0 <= l && r <= n), Rt.push_back(modify_(Rt.back(), 0, n, modify_));
+        assert(l < r && 0 <= l && r <= n), R[get_ver(t)] = modify_(R[get_ver(t)], 0, n, modify_);
     }
 
     T query(int l, int r, int t = -1) {
@@ -41,7 +43,7 @@ template <typename T> struct RangePST {
             return l <= L && R <= r ? al(D[o].v, a, R - L) : R <= l || r <= L ? unit :
             op(f(D[o].lc, L, (L + R) / 2, na, f), f(D[o].rc, (L + R) / 2, R, na, f));
         };
-        return assert(l < r && 0 <= l && r <= n), query_(t < 0 ? Rt.back() : Rt.at(t), 0, n, unit, query_);
+        return assert(l < r && 0 <= l && r <= n), query_(R[get_ver(t)], 0, n, unit, query_);
     }
 
 };
@@ -59,7 +61,7 @@ int main() {
     RangePST<int> pst(vector<int>(B.size() + 1));
     for (auto x : A) {
         int t = lower_bound(B.begin(), B.end(), x) - B.begin();
-        pst.modify(t, t + 1, 1);
+        pst.new_ver(), pst.modify(t, t + 1, 1);
     }
     int q;
     scanf("%d", &q);

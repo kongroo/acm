@@ -3,7 +3,7 @@ using namespace std;
 
 
 template <typename T> struct RangeST {
-    int n, h;
+    const int n, h;
     vector<T> V, D;
     vector<char> B;
     function<T(T, T)> op;

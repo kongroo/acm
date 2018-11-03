@@ -3,7 +3,7 @@ using namespace std;
 
 
 template <typename T> struct SingleST {
-    int n;
+    const int n;
     vector<T> V;
     using Func = function<T(T, T)>;
     Func op, al;
