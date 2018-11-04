@@ -10,7 +10,7 @@ struct PUnionFind {
 
     int get_ver(int t) { return t < 0 ? t + (int)F.size() : t; }
     void new_ver(int t = -1) { F.emplace_back(F[get_ver(t)]); }
-    void alter(int p, int x, int t = -1) {
+    void modify(int p, int x, int t = -1) {
         if (t < 0) F.emplace_back(F.back());
         F[get_ver(t)].replace(p, x);
     }
@@ -23,7 +23,7 @@ struct PUnionFind {
         if (x != y) {
             int sx = size(x, t), sy = size(y, t);
             if (sx < sy) swap(x, y);
-            alter(x, -sx - sy, t), alter(y, x, t);
+            modify(x, -sx - sy, t), modify(y, x, t);
         }
         return x != y;
     }

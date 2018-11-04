@@ -6,13 +6,14 @@ struct PUnionFind {
     const int n;
     vector<array<int, 2>> D;
     vector<int> V, R;
-    PUnionFind(int n): n(n), D(n), V(n * 2, -1), R(1, 1) {
+    PUnionFind(int n): n(n), D(n), V(n, -1), R(1, 1) {
         for (int i = n - 1; i; i--) D[i] = {i << 1, i << 1 | 1};
+        for (auto &d : D) for (int i : {0, 1}) if (d[i] >= n) d[i] -= n;
     }
 
     int get_ver(int t) { return t < 0 ? t + (int)R.size() : t; }
     void new_ver(int t = -1) { R.push_back(R[get_ver(t)]); }
-    void alter(int p, int x, int t = -1) {
+    void modify(int p, int x, int t = -1) {
         int h = 30 - __builtin_clz(p += n), no = D.size(), tmp = no, o, i;
         assert(n <= p && p < n + n), D.resize((int)D.size() + h + 1);
         for (o = R[get_ver(t)]; h; ++no, --h)
@@ -32,7 +33,7 @@ struct PUnionFind {
         if (x != y) {
             int sx = size(x, t), sy = size(y, t);
             if (sx < sy) swap(x, y);
-            alter(x, -sx - sy, t), alter(y, x, t);
+            modify(x, -sx - sy, t), modify(y, x, t);
         }
         return x != y;
     }
