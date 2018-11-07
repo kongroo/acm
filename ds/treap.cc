@@ -30,10 +30,13 @@ void insert(P &t, P it) {
 }
 void insert(P &t, T x) { insert(t, new Node(x)); }
 void erase(P &t, T x) {
-    !t ? void() : t->x == x ? merge(t, t->l, t->r) : erase(x < t->x ? t->l : t->r, x), update(t);
+    P u;
+    !t ? void() : t->x == x ? (u = t, merge(t, t->l, t->r), delete u) :
+    erase(x < t->x ? t->l : t->r, x), update(t);
 }
 P prev(P t, T x) { P u; return !t ? t : t->x >= x ? prev(t->l, x) : !(u = prev(t->r, x)) ? t : u; }
 P next(P t, T x) { P u; return !t ? t : t->x <= x ? next(t->r, x) : !(u = next(t->l, x)) ? t : u; }
+void del(P t) { if (t) del(t->l), del(t->r), delete t; }
 };
 
 
@@ -52,5 +55,6 @@ int main() {
         else if (t == 5) printf("%d\n", Treap::prev(tr, x)->x);
         else printf("%d\n", Treap::next(tr, x)->x);
     }
+    Treap::del(tr);
     return 0;
 }
