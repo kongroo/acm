@@ -10,12 +10,8 @@ using P = Node*;
 int cnt(P t) { return !t ? 0 : t->c; }
 void update(P t) { if (!t) return ; t->c = 1 + cnt(t->l) + cnt(t->r); }
 P find(P t, T x) { return !t || x == t->x ? t : find(x < t->x ? t->l : t->r, x); }
-int index(P t, T x) {
-    return !t ? 0 : x <= t->x ? index(t->l, x) : cnt(t->l) + 1 + index(t->r, x);
-}
-P at(P t, int i) {
-    return !t || i == cnt(t->l) ? t : i < cnt(t->l) ? at(t->l, i) : at(t->r, i - cnt(t->l) - 1);
-}
+int index(P t, T x) { return !t ? 0 : x <= t->x ? index(t->l, x) : cnt(t->l) + 1 + index(t->r, x); }
+P at(P t, int i) { int u; return !t || i == (u = cnt(t->l)) ? t : i < u ? at(t->l, i) : at(t->r, i - ++u); }
 void split(P t, T x, P &l, P &r) {
     !t ? void(l = r = 0) : x < t->x ? (r = t, split(t->l, x, l, t->l)) :
     (l = t, split(t->r, x, t->r, r)), update(t);
@@ -24,11 +20,7 @@ void merge(P &t, P l, P r) {
     !l || !r ? void(t = l ? l : r) : l->p > r->p ?
     (t = l, merge(l->r, l->r, r)) : (t = r, merge(r->l, l, r->l)), update(t);
 }
-void insert(P &t, P it) {
-    !t ? void(t = it) : it->p > t->p ?  (split(t, it->x, it->l, it->r), void(t = it)) :
-    insert(it->x < t->x ? t->l : t->r, it), update(t);
-}
-void insert(P &t, T x) { insert(t, new Node(x)); }
+void insert(P &t, T x) { P u, v; split(t, x, u, v); merge(u, u, new Node(x)); merge(t, u, v); }
 void erase(P &t, T x) {
     P u;
     !t ? void() : t->x == x ? (u = t, merge(t, t->l, t->r), delete u) :

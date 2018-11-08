@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct UnionFind {
+struct DSU {
     vector<int> F;
-    UnionFind(int n): F(n, -1) {}
+    DSU(int n): F(n, -1) {}
     int root(int x) { return F[x] < 0 ? x : F[x] = root(F[x]); }
     int size(int x) { return -F[root(x)]; }
     bool same(int x, int y) { return root(x) == root(y); }

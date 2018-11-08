@@ -2,11 +2,11 @@
 using namespace std;
 
 
-struct PUnionFind {
+struct PDSU {
     const int n;
     vector<array<int, 2>> D;
     vector<int> V, R;
-    PUnionFind(int n): n(n), D(n), V(n, -1), R(1, 1) {
+    PDSU(int n): n(n), D(n), V(n, -1), R(1, 1) {
         for (int i = n - 1; i; i--) D[i] = {i << 1, i << 1 | 1};
         for (auto &d : D) for (int i : {0, 1}) if (d[i] >= n) d[i] -= n;
     }
@@ -44,7 +44,7 @@ struct PUnionFind {
 int main() {
     int n, m;
     scanf("%d%d", &n, &m);
-    PUnionFind uf(n + 1);
+    PDSU uf(n + 1);
     for (int i = 1; i <= m; i++) {
         int t, a, b, k;
         scanf("%d", &t);

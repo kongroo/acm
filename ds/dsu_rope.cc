@@ -4,9 +4,9 @@ using namespace std;
 using namespace __gnu_cxx;
 
 
-struct PUnionFind {
+struct PDSU {
     vector<rope<int>> F;
-    PUnionFind(int n): F(1, rope<int>(n, -1)) {}
+    PDSU(int n): F(1, rope<int>(n, -1)) {}
 
     int get_ver(int t) { return t < 0 ? t + (int)F.size() : t; }
     void new_ver(int t = -1) { F.emplace_back(F[get_ver(t)]); }
@@ -34,7 +34,7 @@ struct PUnionFind {
 int main() {
     int n, m;
     scanf("%d%d", &n, &m);
-    PUnionFind uf(n + 1);
+    PDSU uf(n + 1);
     for (int i = 1; i <= m; i++) {
         int t, a, b, k;
         scanf("%d", &t);

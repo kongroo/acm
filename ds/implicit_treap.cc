@@ -10,10 +10,7 @@ using P = Node*;
 int cnt(P t) { return !t ? 0 : t->c; }
 void update(P t) { if (!t) return ; t->c = 1 + cnt(t->l) + cnt(t->r); }
 void push(P t) { if (t && t->b) {t->b = 0, swap(t->l, t->r); if (t->l) t->l->b ^= 1; if (t->r) t->r->b ^= 1;}}
-P at(P t, int i) {
-    return !t || (push(t), i == cnt(t->l)) ? t :
-           i < cnt(t->l) ?  at(t->l, i) : at(t->r, i - cnt(t->l) - 1);
-}
+P at(P t, int i) { int u; return !t || (push(t), i == (u = cnt(t->l))) ? t : i < u ? at(t->l, i) : at(t->r, i - ++u); }
 void split(P t, P &l, P &r, int k, int a = 0) {
     !t ? void(l = r = 0) : (push(t), k <= a + cnt(t->l)) ? (r = t, split(t->l, l, t->l, k, a)) :
     (l = t, split(t->r, t->r, r, k, a + 1 + cnt(t->l))), update(t);
@@ -23,7 +20,11 @@ void merge(P &t, P l, P r) {
     (t = l, merge(l->r, l->r, r)) : (t = r, merge(r->l, l, r->l)), update(t);
 }
 void insert(P &t, int i, T x) { P u, v; split(t, u, v, i); merge(u, u, new Node(x)); merge(t, u, v); }
-void erase(P &t, int i) { P u = at(t, i); if (u) merge(t, u->l, u->r), delete u; }
+void erase(P &t, int i) {
+    P u;
+    !t ? void() : cnt(t->l) == i ? (u = t, merge(t, t->l, t->r), delete u) :
+    cnt(t->l) > i ? erase(t->l, i) : erase(t->r, i - cnt(t->l) - 1), update(t);
+}
 void reverse(P t, int l, int r) {
     P u, v, w;
     split(t, u, v, l), split(v, v, w, r - l);
