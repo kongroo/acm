@@ -4,49 +4,43 @@ using namespace std;
 
 namespace Treap {
 using T = int;
-struct Node { T x; Node *l = 0, *r = 0; int p = rand(), c = 1; Node(T x) : x(x) {} };
-using P = Node*;
+struct Node { T x; unique_ptr<Node> l, r; int p = rand(), c = 1; Node(T x) : x(x) {} };
+using P = unique_ptr<Node>;
 
-int cnt(P t) { return !t ? 0 : t->c; }
-void update(P t) { if (!t) return ; t->c = 1 + cnt(t->l) + cnt(t->r); }
-P find(P t, T x) { return !t || x == t->x ? t : find(x < t->x ? t->l : t->r, x); }
-int index(P t, T x) { return !t ? 0 : x <= t->x ? index(t->l, x) : cnt(t->l) + 1 + index(t->r, x); }
-P at(P t, int i) { int u; return !t || i == (u = cnt(t->l)) ? t : i < u ? at(t->l, i) : at(t->r, i - ++u); }
-void split(P t, T x, P &l, P &r) {
-    !t ? void(l = r = 0) : x < t->x ? (r = t, split(t->l, x, l, t->l)) :
-    (l = t, split(t->r, x, t->r, r)), update(t);
+int cnt(P &t) { return !t ? 0 : t->c; }
+void up(P &t) { if (t) t->c = 1 + cnt(t->l) + cnt(t->r); }
+bool has(P &t, T x) { return !t ? 0 : x == t->x ? 1 : has(x < t->x ? t->l : t->r, x); }
+int index(P &t, T x) { return !t ? 0 : x <= t->x ? index(t->l, x) : cnt(t->l) + 1 + index(t->r, x); }
+int rindex(P &t, T x) { return !t ? 0 : x >= t->x ? rindex(t->r, x) : cnt(t->r) + 1 + rindex(t->l, x); }
+T at(P &t, int i) { int u = cnt(t->l); return i == u ? t->x : i < u ? at(t->l, i) : at(t->r, i - ++u); }
+void split(P &t, T x, P &l, P &r) {
+    !t ? (l.release(), r.release(), void()) : x < t->x ?
+    (r = move(t), split(r->l, x, l, r->l), up(r)) : (l = move(t), split(l->r, x, l->r, r), up(l));
 }
-void merge(P &t, P l, P r) {
-    !l || !r ? void(t = l ? l : r) : l->p > r->p ?
-    (t = l, merge(l->r, l->r, r)) : (t = r, merge(r->l, l, r->l)), update(t);
+void merge(P &t, P &l, P &r) {
+    !l || !r ? void(t = move(l ? l : r)) : l->p > r->p ?
+    (merge(l->r, l->r, r), up(t = move(l))) : (merge(r->l, l, r->l), up(t = move(r)));
 }
-void insert(P &t, T x) { P u, v; split(t, x, u, v); merge(u, u, new Node(x)); merge(t, u, v); }
-void erase(P &t, T x) {
-    P u;
-    !t ? void() : t->x == x ? (u = t, merge(t, t->l, t->r), delete u) :
-    erase(x < t->x ? t->l : t->r, x), update(t);
-}
-P prev(P t, T x) { P u; return !t ? t : t->x >= x ? prev(t->l, x) : !(u = prev(t->r, x)) ? t : u; }
-P next(P t, T x) { P u; return !t ? t : t->x <= x ? next(t->r, x) : !(u = next(t->l, x)) ? t : u; }
-void del(P t) { if (t) del(t->l), del(t->r), delete t; }
+void insert(P &t, T x) { P u, v, w = make_unique<Node>(x); split(t, x, u, v); merge(u, u, w); merge(t, u, v); }
+void erase(P &t, T x) { t->x == x ? merge(t, t->l, t->r) : erase(x < t->x ? t->l : t->r, x), up(t); }
 };
 
 
 // Luogu. 3369
 int main() {
+    using namespace Treap;
     int n;
     scanf("%d", &n);
-    Treap::P tr = nullptr;
+    P tr = nullptr;
     while (n--) {
         int t, x;
         scanf("%d%d", &t, &x);
-        if (t == 1) Treap::insert(tr, x);
-        else if (t == 2) Treap::erase(tr, x);
-        else if (t == 3) printf("%d\n", Treap::index(tr, x) + 1);
-        else if (t == 4)  printf("%d\n", Treap::at(tr, x - 1)->x);
-        else if (t == 5) printf("%d\n", Treap::prev(tr, x)->x);
-        else printf("%d\n", Treap::next(tr, x)->x);
+        if (t == 1) insert(tr, x);
+        else if (t == 2) erase(tr, x);
+        else if (t == 3) printf("%d\n", index(tr, x) + 1);
+        else if (t == 4)  printf("%d\n", at(tr, x - 1));
+        else if (t == 5) printf("%d\n", at(tr, index(tr, x) - 1));
+        else printf("%d\n", at(tr, cnt(tr) - rindex(tr, x)));
     }
-    Treap::del(tr);
     return 0;
 }
