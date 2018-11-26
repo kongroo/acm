@@ -2,28 +2,21 @@
 using namespace std;
 
 
-namespace HashW {
-using ULL = unsigned long long;
-vector<ULL> P;
-void init(int n) {
-    P.assign(n + 1, 1313131313ULL);
-    for (int i = 1; i <= n; i++) P[i] *= P[i - 1];
-}
-template <typename T> ULL get(const T& S) {
-    ULL ret = 0;
-    for (auto c : S) ret += P[c];
-    return ret;
-}
-}
+// works for [0, n)
+struct HashW {
+    using ULL = unsigned long long;
+    vector<ULL> P;
+    HashW(int n): P(n, 1313131313) { for (int i = 1; i < n; i++) P[i] *= P[i - 1]; }
+    template <typename T> ULL get(const T &S) { ULL r(0); for (auto c : S) r += P[c]; return r; }
+};
 
 
 // CF. 154C
 int main() {
-    using ULL = unsigned long long;
     using PII = pair<int, int>;
     int n, m;
     scanf("%d%d", &n, &m);
-    HashW::init(n);
+    HashW hs(n + 1);
     vector<vector<int>> G(n + 1);
     vector<PII> E;
     for (int i = 0; i < m; i++) {
@@ -36,8 +29,8 @@ int main() {
     for (int i = 1; i <= n; i++) {
         sort(G[i].begin(), G[i].end());
     }
-    unordered_map<ULL, int>  M;
-    for (int i = 1; i <= n; i++) M[HashW::get(G[i])]++;
+    unordered_map<long long, int>  M;
+    for (int i = 1; i <= n; i++) M[hs.get(G[i])]++;
     auto ans = 0LL;
     for (auto p : M) {
         int t = p.second;
