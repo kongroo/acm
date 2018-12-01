@@ -14,3 +14,8 @@ vector<int> manacher(const string& s) {
     }
     return Ans;
 }
+
+
+int main() {
+
+}

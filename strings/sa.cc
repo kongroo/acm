@@ -1,37 +1,23 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <typename T> vector<int> build_sa(const T& s, vector<int>& Sa, vector<int>& H) {
-    int n = (int)s.size();
-    Sa.resize(n + 1);
-    H.resize(n + 1);
-    iota(Sa.begin(), Sa.end(), 0);
-    vector<int> Rank(s.begin(), s.end());
-    Rank.push_back(INT_MIN);
-    for (int len = 1; len <= n; len <<= 1) {
+template <typename T> vector<int> build_sa(const T &S, vector<int> &Sa, vector<int> &H) {
+    int n = (int)S.size();
+    vector<int> R(S.begin(), S.end()), U;
+    Sa.resize(n + 1), iota(Sa.begin(), Sa.end(), 0), R.push_back(INT_MIN);
+    for (int len = 1; len <= n; len <<= 1, R = U) {
         auto cmp = [&](int i, int j) {
-            if (Rank[i] != Rank[j]) return Rank[i] < Rank[j];
-            int l = i + len >= n ? 0 : Rank[i + len];
-            int r = j + len >= n ? 0 : Rank[j + len];
-            return l < r;
+            return R[i] != R[j] ? R[i] < R[j] :
+                   (i + len < n ? R[i + len] : 0) < (j + len < n ? R[j + len] : 0);
         };
-        sort(Sa.begin(), Sa.end(), cmp);
-        auto Tmp(Rank);
-        Tmp[Sa[0]] = 0;
-        for (int i = 1; i <= n; i++) Tmp[Sa[i]] = Tmp[Sa[i - 1]] + cmp(Sa[i - 1], Sa[i]);
-        Rank = Tmp;
+        sort(Sa.begin(), Sa.end(), cmp), U = R, U[Sa[0]] = 0;
+        for (int i = 1; i <= n; i++) U[Sa[i]] = U[Sa[i - 1]] + cmp(Sa[i - 1], Sa[i]);
     }
-    int h = 0;
-    H[0] = 0;
-    for (int i = 0; i < n; i++) {
-        int j = Sa[Rank[i] - 1];
-        if (h > 0) h--;
-        for (; j + h < n && i + h < n; h++) if (s[j + h] != s[i + h]) break;
-        H[Rank[i] - 1] = h;
-    }
-    return Rank;
+    H.resize(n + 1), H[0] = R.back() = 0;
+    for (int i = 0, h = 0; i < n; H[R[i++] - 1] = h, h -= h > 0)
+        for (int j = Sa[R[i] - 1]; j + h < n && i + h < n; h++) if (S[j + h] != S[i + h]) break;
+    return R;
 }
-
 
 // CF. 873F
 int main() {

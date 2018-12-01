@@ -3,22 +3,22 @@ using namespace std;
 
 
 template <int N = 26, int B = 'a', typename T = int> struct Trie {
-    int n;
-    vector<array<int, N>> D;
-    vector<T> V;
-    function<T(T, T)> al;
-    Trie(function<T(T, T)> al = plus<T>()): n(1), D(1), V(1), al(al) {}
+    struct State { int link; T v; array<int, N> M; };
+    vector<State> D;
+    function<T(T, T)> op;
+    Trie(function<T(T, T)> op = plus<T>()): D(2), op(op) {}
 
-    template <typename Seq> void insert(const Seq &S, T x, T m = T(), int u = 0) {
+    template <typename Seq> void insert(const Seq &S, T fin, T mid = T(), int t = 1) {
         for (auto c : S) {
-            if (!D[u][c - B]) D[u][c - B] = n++, D.resize(n), V.resize(n);
-            V[u] = al(V[u], m), u = D[u][c - B];
+            c -= B, assert(0 <= c && c < N);
+            if (!D[t].M[c]) D[t].M[c] = D.size(), D.emplace_back(D[0]);
+            D[t].v = op(D[t].v, mid), t = D[t].M[c];
         }
-        V[u] = al(V[u], x);
+        D[t].v = op(D[t].v, fin);
     }
-    template <typename Seq> pair<bool, T> query(const Seq &S, int u = 0) {
-        for (auto x : S) { u = D[u][x - B]; if (!u) return {false, T()}; }
-        return {true, V[u]};
+    template <typename Seq> pair<int, T> query(const Seq &S, int t = 1) {
+        for (auto x : S) { t = D[t].M.at(x - B); if (!t) return {0, T()}; }
+        return {t, D[t].v};
     }
 };
 

@@ -2,7 +2,8 @@
 using namespace std;
 
 
-// P[0] = 0, P[i] is max that let S[0..P[i]-1] == S[i-P[i]+1..i]
+// P[0] = 0, P[i] is the length of longest proper prefix 
+// of S[0...i] that is also a suffix of it
 template <typename T> vector<int> get_p(const T &S) {
     vector<int> P(S.size());
     for (int l = 0, r = 1; r < (int)S.size(); r++) {
