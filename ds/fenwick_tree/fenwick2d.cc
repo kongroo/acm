@@ -2,7 +2,7 @@
 using namespace std;
 
 
-template <typename T> struct Fenwick2D {
+template <class T> struct Fenwick2D {
     int n, m;
     vector<vector<T>> V;
     Fenwick2D(int n, int m): n(n), m(m), V(n, vector<T>(m)) {}

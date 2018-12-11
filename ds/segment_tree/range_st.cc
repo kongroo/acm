@@ -2,7 +2,7 @@
 using namespace std;
 
 
-template <typename T> struct RangeST {
+template <class T> struct RangeST {
     const int n, h;
     vector<T> V, D;
     vector<char> B;

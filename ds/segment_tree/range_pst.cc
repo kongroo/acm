@@ -2,7 +2,7 @@
 using namespace std;
 
 
-template <typename T> struct RangePST {
+template <class T> struct RangePST {
     struct Node { T v, d; int lc, rc; };
     T unit; // op(unit, x) = op(x, unit) = x, al(x, unit, k) = x
     const int n;

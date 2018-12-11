@@ -2,7 +2,7 @@
 using namespace std;
 
 
-template <typename T> struct Fenwick {
+template <class T> struct Fenwick {
     vector<T> V;
     Fenwick(int n): V(n) {}
     void add(size_t i, T x) { for (; i < V.size(); i |= i + 1) V[i] += x; }

@@ -2,7 +2,7 @@
 using namespace std;
 
 
-template <typename T> struct SinglePST {
+template <class T> struct SinglePST {
     struct Node { T v; int lc, rc; };
     T unit; // op(unix, x) = op(x, unit) = x
     const int n;

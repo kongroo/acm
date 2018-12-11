@@ -2,7 +2,7 @@
 using namespace std;
 
 
-template <typename T> struct RangeFenwick {
+template <class T> struct RangeFenwick {
     vector<T> V[2];
     RangeFenwick(int n) { for (int i = 0; i < 2; i++) V[i].assign(n, T()); }
     void _add(size_t i, T x, int k) { for (; i < V[k].size(); i |= i + 1) V[k][i] += x; }
