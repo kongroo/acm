@@ -2,8 +2,8 @@
 using namespace std;
 
 
-template <int N = 26, int B = 'a', typename T = int> struct Trie {
-    struct State { int link; T v; array<int, N> M; };
+template <int N = 26, int B = 'a', class T = int> struct Trie {
+    struct State { bool ini = true, fin = false; T v; array<int, N> M; };
     vector<State> D;
     function<T(T, T)> op;
     Trie(function<T(T, T)> op = plus<T>()): D(2), op(op) {}
@@ -12,15 +12,16 @@ template <int N = 26, int B = 'a', typename T = int> struct Trie {
         for (auto c : S) {
             c -= B, assert(0 <= c && c < N);
             if (!D[t].M[c]) D[t].M[c] = D.size(), D.emplace_back(D[0]);
-            D[t].v = op(D[t].v, mid), t = D[t].M[c];
+            D[t].v = exchange(D[t].ini, false) ? mid : op(D[t].v, mid), t = D[t].M[c];
         }
-        D[t].v = op(D[t].v, fin);
+        D[t].v = exchange(D[t].ini, false) ? fin : op(D[t].v, fin), D[t].fin = true;
     }
     template <typename Seq> pair<int, T> query(const Seq &S, int t = 1) {
         for (auto x : S) { t = D[t].M.at(x - B); if (!t) return {0, T()}; }
         return {t, D[t].v};
     }
 };
+
 
 
 // Luogu.2580
