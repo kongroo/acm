@@ -5,15 +5,13 @@ using namespace std;
 struct Hash1 {
     int n, p, m;
     vector<int> P, H;
-    constexpr int mul(int x, int y, int m) { return 1LL * x * y % m; }
-    constexpr int add(int x, int y, int m) { int t = x + y; return t < 0 ? t + m : t < m ? t : t - m; }
     template <typename T> Hash1(const T &S, int p = 131, int m = 1000000409) :
         n(S.size()), p(p), m(m), P(n), H(n + 1) {
         P[0] = 1, H[n] = 0;
-        for (int i = 1; i < n; i++) P[i] = mul(P[i - 1], p, m);
-        for (int i = n - 1; i >= 0; i--) H[i] = add(mul(H[i + 1], p, m), S[i],  m);;
+        for (int i = 1; i < n; i++) P[i] = 1LL * P[i - 1] * p % m;
+        for (int i = n - 1; i >= 0; i--) H[i] = (1LL * p * H[i + 1] % m + S[i]) % m;
     }
-    int get(int l, int r) { return add(H[l], -mul(H[r], P[r - l], m), m); }
+    int get(int l, int r) { return (H[l] - 1LL * H[r] * P[r - l] % m + m) % m;}
 };
 
 
