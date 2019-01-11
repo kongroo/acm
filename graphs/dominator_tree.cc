@@ -6,9 +6,11 @@ vector<vector<int>> get_dominator_tree(const vector<vector<int>> &G, int root) {
     int n = (int)G.size(), sz = 0;
     vector<int> In(n, -1), A(n), Idom(n), Semi(n), B(n), Fa(n), Pa(n);
     vector<vector<int>> Dom(n), rG(n), Ret(n);
+    for (int u = 0; u < n; Fa[u] = B[u] = Semi[u] = u, u++)
+        for (auto v : G[u]) rG[v].push_back(u);
     auto dfs = [&](int u, auto f) -> void {
-        In[u] = sz, A[sz++] = Fa[u] = B[u] = Semi[u] = u;
-        for (auto v : G[u]) if (rG[v].push_back(u), !~In[v]) f(v, f), Pa[In[v]] = In[u];
+        In[u] = sz, A[sz++] = u;
+        for (auto v : G[u]) if (!~In[v]) f(v, f), Pa[In[v]] = In[u];
     };
     dfs(root, dfs);
     auto get = [&](int x, auto f) -> int {
