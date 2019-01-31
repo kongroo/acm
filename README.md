@@ -1,6 +1,6 @@
 # My Templates for Competitive Programming
 ## Contents
-```
+```python
 ├── basic 
 │   ├── heap.cc 
 │   └── sortings.cc
