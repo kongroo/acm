@@ -27,7 +27,7 @@ struct PDSU {
     }
     int root(int x, int t = -1) { int p = query(x, t); return p < 0 ? x : root(p, t); }
     bool same(int x, int y, int t = -1) { return root(x, t) == root(y, t); }
-    int size(int x, int t = -1) { return -query(x, t); }
+    int size(int x, int t = -1) { return -query(root(x, t), t); }
     bool unite(int x, int y, int t = -1) {
         x = root(x, t), y = root(y, t);
         if (x != y) {
