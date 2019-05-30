@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
 /* Some useful bitwise operations
  * x & ~(1 << i)            set i-th rightmost bit 0
  * x | (1 << i)             set i-th rightmost bit 1
@@ -26,12 +25,15 @@ using namespace std;
  */
 
 // check if x * y will overflow
-constexpr bool overflow(long long x, long long y) { return __builtin_clzll(x) + __builtin_clzll(y) <= 64; }
+constexpr bool overflow(long long x, long long y) {
+  return __builtin_clzll(x) + __builtin_clzll(y) <= 64;
+}
 // return next mask with same number of ones
-constexpr int next_comb(int m) { int l = m & -m, s = l + m; return s | (m ^ s) / l / 4; }
-
+constexpr int next_comb(int m) {
+  int l = m & -m, s = l + m;
+  return s | (m ^ s) / l / 4;
+}
 
 int main() {
-    for (int i = 1; i <= 30; i++)
-        printf("%d, %d\n", i, __builtin_ffs(i));
+  for (int i = 1; i <= 30; i++) printf("%d, %d\n", i, __builtin_ffs(i));
 }
