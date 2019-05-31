@@ -3,17 +3,16 @@ using namespace std;
 
 // n x m matrix
 template <typename T>
-struct Matrix {
-  vector<vector<T>> D;
+struct Matrix : vector<vector<T>> {
   using Func = function<T(T, T)>;
   Func add, mul;
   Matrix(size_t n, size_t m, Func add = plus<T>(), Func mul = multiplies<T>())
-      : D(n, vector<T>(m)), add(add), mul(mul) {}
+      : add(add), mul(mul) {
+    this->assign(n, vector<T>(m));
+  }
 
-  size_t n() const { return D.size(); }
-  size_t m() const { return n() == 0 ? 0 : D[0].size(); }
-  vector<T>& operator[](int i) { return D[i]; }
-  const vector<T>& operator[](int i) const { return D[i]; }
+  const size_t n() const { return this->size(); }
+  const size_t m() const { return n() == 0 ? 0 : this->front().size(); }
   Matrix<T> operator*(const Matrix<T>& N) const {
     assert(m() == N.n());
     Matrix<T> R(n(), N.m(), add, mul);
@@ -21,7 +20,7 @@ struct Matrix {
     for (size_t i = 0; i < im; ++i)
       for (size_t j = 0; j < jm; ++j)
         for (size_t k = 0; k < km; ++k)
-          tmp = mul(D[i][k], N[k][j]), R[i][j] = k == 0 ? tmp : add(R[i][j], tmp);
+          tmp = mul((*this)[i][k], N[k][j]), R[i][j] = k == 0 ? tmp : add(R[i][j], tmp);
     return R;
   }
   Matrix<T> pow(long long k) const {
