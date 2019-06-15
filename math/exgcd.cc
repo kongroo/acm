@@ -18,4 +18,15 @@ bool linear_equation(T a, T b, T c, T& x, T& y) {
   return true;
 }
 
+// solve a * x % m = b
+template <class T = int>
+bool moduler_equation(T a, T b, T m, T& x) {
+  long long r, s;
+  T d = exgcd<long long>(a, m, r, s);
+  if (b % d) return false;
+  x = 1LL * b / d * r;
+  x = (x % m + m) % m;
+  return true;
+}
+
 int main() { return 0; }
