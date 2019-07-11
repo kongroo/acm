@@ -8,6 +8,7 @@ struct CombineSmall {
     for (int i = 1; i < n; i++) F[i].resize(i + 1);
   }
   int com(int n, int k) {
+    if (k == 0) return 1;
     return k > n ? 0
                  : k + k > n
                        ? com(n, n - k)
