@@ -29,4 +29,11 @@ bool moduler_equation(T a, T b, T m, T& x) {
   return true;
 }
 
+template <class T = int>
+T inv(T num, T m) {
+  T x, y;
+  exgcd(num, m, x, y);
+  return (x + m) % m;
+}
+
 int main() { return 0; }
