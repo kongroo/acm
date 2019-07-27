@@ -1,16 +1,15 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// P[0] = 0, P[i] is the length of longest proper prefix
-// of S[0...i] that is also a suffix of it
-template <typename T>
-vector<int> get_p(const T& S) {
-  vector<int> P(S.size());
-  for (int l = 0, r = 1; r < (int)S.size(); r++) {
-    while (l && S[l] != S[r]) l = P[l - 1];
-    if (S[l] == S[r]) P[r] = ++l;
+// p[0] = 0, s[i] is the length of longest proper prefix
+// of s[0...i] that is also a suffix of it
+template <class T> vector<int> get_p(const T &s) {
+  vector<int> p(s.size());
+  for (int l = 0, r = 1; r < int(s.size()); r++) {
+    while (l && s[l] != s[r]) l = p[l - 1];
+    if (s[l] == s[r]) p[r] = ++l;
   }
-  return P;
+  return p;
 }
 
 // 51Nod. 1277

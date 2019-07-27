@@ -1,27 +1,17 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <class T>
-struct RangePST {
-  struct Node {
-    T v, d;
-    int lc, rc;
-  };
-  T unit;  // op(unit, x) = op(x, unit) = x, al(x, unit, k) = x
-  const int n;
-  vector<Node> D;
-  vector<int> R;
+template <class T> struct RangePST {
   function<T(T, T)> op;
   function<T(T, T, int)> al;
-  RangePST(
-      const vector<T>& A, T unit = T(), function<T(T, T)> op = plus<T>(),
-      function<T(T, T, int)> al = [](T v, T d, int k) { return v + d * k; })
-      : unit(unit),
-        n(1 << (32 - __builtin_clz(A.size()))),
-        D(n * 2, {unit, unit, 0, 0}),
-        R(1, 1),
-        op(op),
-        al(al) {
+  struct Node { T v, d; int lc, rc; };
+  const int n;
+  const T unit;  // op(unit, x) = op(x, unit) = x, al(x, unit, k) = x
+  vector<Node> D;
+  vector<int> R;
+  RangePST(const vector<T>& A,  function<T(T, T)> op = plus<T>(),
+           function<T(T, T, int)> al = [](T v, T d, int k) { return v + d * k; }, T unit = T())
+      : op(op), al(al), n(1 << (32 - __builtin_clz(A.size()))), unit(unit), D(n * 2, {unit, unit, 0, 0}), R(1, 1) {
     for (size_t i = 0; i < A.size(); i++) D[i + n].v = A[i];
     for (int i = n - 1; i > 0; i--) D[i] = {op(D[i * 2].v, D[i * 2 + 1].v), unit, i * 2, i * 2 + 1};
   }
@@ -29,7 +19,7 @@ struct RangePST {
   int get_ver(int t) { return t < 0 ? t + (int)R.size() : t; }
   void new_ver(int t = -1) { R.push_back(R[get_ver(t)]); }
   void modify(int l, int r, T val, int t = -1) {
-    static const auto modify_ = [&](int o, int L, int R, auto f) {
+    const auto modify_ = [&](int o, int L, int R, auto f) {
       if (r <= L || R <= l) return 0;
       int no = D.size(), M = (L + R) / 2;
       D.push_back(D[o]);
@@ -46,13 +36,10 @@ struct RangePST {
   }
 
   T query(int l, int r, int t = -1) {
-    static const auto query_ = [&](int o, int L, int R, T a, auto f) -> T {
+    const auto query_ = [&](int o, int L, int R, T a, auto f) -> T {
       T na = al(a, D[o].d, 1);
-      return l <= L && R <= r
-                 ? al(D[o].v, a, R - L)
-                 : R <= l || r <= L
-                       ? unit
-                       : op(f(D[o].lc, L, (L + R) / 2, na, f), f(D[o].rc, (L + R) / 2, R, na, f));
+      return l <= L && R <= r ? al(D[o].v, a, R - L) : R <= l || r <= L ? unit
+               : op(f(D[o].lc, L, (L + R) / 2, na, f), f(D[o].rc, (L + R) / 2, R, na, f));
     };
     return assert(l < r && 0 <= l && r <= n), query_(R[get_ver(t)], 0, n, unit, query_);
   }
