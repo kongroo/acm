@@ -7,15 +7,13 @@ vector<int> build_sa(const T& S, vector<int>& Sa, vector<int>& H) {
   vector<int> R(S.begin(), S.end()), U;
   Sa.resize(n + 1), iota(Sa.begin(), Sa.end(), 0), R.push_back(INT_MIN);
   for (int len = 1; len <= n; len <<= 1, R = U) {
-    auto cmp = [&](int i, int j) {
-      return R[i] != R[j] ? R[i] < R[j]
-                          : (i + len < n ? R[i + len] : 0) < (j + len < n ? R[j + len] : 0);
-    };
+    auto cmp = [&](int i, int j) { return R[i] != R[j] ? R[i] < R[j] : 
+      (i + len <= n ? R[i + len] : INT_MIN) < (j + len <= n ? R[j + len] : INT_MIN); };
     sort(Sa.begin(), Sa.end(), cmp), U = R, U[Sa[0]] = 0;
     for (int i = 1; i <= n; i++) U[Sa[i]] = U[Sa[i - 1]] + cmp(Sa[i - 1], Sa[i]);
   }
-  H.resize(n + 1), H[0] = R.back() = 0;
-  for (int i = 0, h = 0; i<n; H[R[i++] - 1] = h, h -= h> 0)
+  H.resize(n + 1), H[0] = 0;
+  for (int i = 0, h = 0; i < n; H[R[i++]] = h, h -= h > 0)
     for (int j = Sa[R[i] - 1]; j + h < n && i + h < n; h++)
       if (S[j + h] != S[i + h]) break;
   return R;
