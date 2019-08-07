@@ -1,12 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <typename T>
-struct MaxFlow {
-  struct Edge {
-    int u, v;
-    T c, f;
-  };
+template <typename T> struct MaxFlow {
+  struct Edge { int u, v; T c, f; };
   const T eps = (T)1e-9;
   vector<Edge> E;
   int n, src, sink;
@@ -15,13 +11,8 @@ struct MaxFlow {
   T flow = T();
   MaxFlow(int n, int src, int sink) : n(n), src(src), sink(sink), G(n), P(n), D(n) {}
 
-  void clear_flow() {
-    for (auto& e : E) e.f = T();
-    flow = T();
-  }
-  void reduce() {
-    for (auto& e : E) e.c -= e.f;
-  }
+  void clear_flow() { for (auto& e : E) e.f = T(); flow = T(); }
+  void reduce() { for (auto& e : E) e.c -= e.f; }
   void add_edge(int u, int v, T cap) {
     assert(0 <= u && u < n && 0 <= v && v < n);
     G[u].push_back(E.size()), E.push_back({u, v, cap, T()});

@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <class T> struct Fenwick {
+/* template <class T> struct Fenwick {
   vector<T> v;
   Fenwick(int n) : v(n) {}
   void add(size_t i, T x) { for (; i < v.size(); i |= i + 1) v[i] += x; }
@@ -11,13 +11,13 @@ template <class T> struct Fenwick {
     return r;
   }
   T sum(int l, int r) { return sum(r) - sum(l); }
-};
+}; */
 
 template <class T> struct Fenwick {
   vector<T> v;
   Fenwick(size_t n) : v(n + 1) {}
   void add(size_t i, T x) { for (++i; i < v.size(); i += i & -i) v[i] += x; }
-  T sum(size_t i) { for (v[0] = T(); i; i -= i & -i) v[0] += v[i]; return v[0]; }
+  T sum(size_t i) { for (v[0] = T(); i; i -= i & -i) v[0] += v.at(i); return v[0]; }
   T sum(size_t l, size_t r) { return sum(r) - sum(l); }
 };
 
