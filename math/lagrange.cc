@@ -14,8 +14,7 @@ struct Lagrange {
   constexpr LL sub(LL x, LL y) { return (x - y + m) % m; }
   constexpr LL add(LL x, LL y) { return (x + y) % m; }
   // O(k^2), naive
-  template <typename T>
-  LL interp(const vector<T>& X, const vector<T>& Y, LL x) {
+  template <typename T> LL interp(const vector<T>& X, const vector<T>& Y, LL x) {
     LL ans = 0;
     for (size_t i = 0; i < X.size(); i++) {
       LL num = Y.at(i), den = 1;
@@ -26,8 +25,7 @@ struct Lagrange {
     return ans;
   }
   // O(k), for X is [0, 1, ..., k]
-  template <typename T>
-  LL interp_fast(const vector<T>& Y, LL x) {
+  template <typename T> LL interp_fast(const vector<T>& Y, LL x) {
     int k = (int)Y.size() - 1;
     assert(k < n);
     if (x <= k) return Y[x];

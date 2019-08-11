@@ -14,7 +14,7 @@ struct Hash2 {
       : n(S.size()), p1(p1), p2(p2), m1(m1), m2(m2) {
     for (int i = 0; i < 4; i++) H[i].assign(n + 1, 0ULL);
     H[2][0] = H[3][0] = 1;
-    for (int i = 1; i < n; i++)
+    for (int i = 1; i <= n; i++)
       H[2][i] = mul(H[2][i - 1], p1, m1), H[3][i] = mul(H[3][i - 1], p2, m2);
     for (int i = n - 1; i >= 0; i--) {
       H[0][i] = add(mul(H[0][i + 1], p1, m1), S[i], m1);
