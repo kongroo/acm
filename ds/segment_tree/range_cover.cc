@@ -9,9 +9,7 @@ struct RangeCover {
   void apply(int p, int v, int k) {
     C[p] += v, assert(C[p] >= 0), S[p] = C[p] ? k : p < n ? S[p << 1] + S[p << 1 | 1] : 0;
   }
-  void build(int p) {
-    for (int k = 2; p > 1; k <<= 1) p >>= 1, apply(p, 0, k);
-  }
+  void build(int p) { for (int k = 2; p > 1; k <<= 1) p >>= 1, apply(p, 0, k); }
   void modify(int l, int r, int v) {
     assert(l < r);
     int l0 = l, r0 = r, k = 1;

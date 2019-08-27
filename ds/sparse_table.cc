@@ -1,12 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <class T>
-struct STable {
+template <class T> struct STable {
   vector<vector<T>> F;
   function<T(T, T)> op;
-  STable(
-      const vector<T>& A, function<T(T, T)> op = [](T a, T b) { return min(a, b); })
+  STable(const vector<T>& A, function<T(T, T)> op = [](T a, T b) { return min(a, b); })
       : F(32 - __builtin_clz(A.size()), A), op(op) {
     for (size_t c = 0; c + 1 < F.size(); c++)
       for (size_t i = 0; i < A.size(); i++)

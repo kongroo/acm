@@ -5,12 +5,12 @@ namespace AhoCorasick {
 using T = int;
 constexpr int B = 'a', N = 26;
 
-struct Node { T val = T(), ans = -1; Node *link, *nxt[N]; };
+struct Node { T val = T(), ans = -1; Node *link, *ch[N]; };
 
 void insert(Node *o, const string &s) {
   for (auto c: s) {
-    if (!o->nxt[c - B]) o->nxt[c - B] = new Node();
-    o = o->nxt[c - B];
+    if (!o->ch[c - B]) o->ch[c - B] = new Node();
+    o = o->ch[c - B];
   } 
   o->val++;
 }
@@ -22,10 +22,10 @@ void build_fail(Node *root) {
     Node *t = qu.front();
     qu.pop();
     for (int d = 0; d < N; d++) {
-      if (t->nxt[d]) {
-        Node *nxt = t->nxt[d], *u = t->link;
-        while (u && !u->nxt[d]) u = u->link;
-        nxt->link = u ? u->nxt[d] : root, qu.push(nxt);
+      if (t->ch[d]) {
+        Node *nxt = t->ch[d], *u = t->link;
+        while (u && !u->ch[d]) u = u->link;
+        nxt->link = u ? u->ch[d] : root, qu.push(nxt);
       }
     }
   }
@@ -44,8 +44,8 @@ vector<int> calc(Node *root, const string &s) {
   for (int i = 0; i < n; i++) {
     int c = s[i] - B;
     assert(0 <= c && c < N);
-    while (o && !o->nxt[c]) o = o->link;
-    o = o ? o->nxt[c] : root;
+    while (o && !o->ch[c]) o = o->link;
+    o = o ? o->ch[c] : root;
     ans[i] = dp(o);
   }
   return ans;

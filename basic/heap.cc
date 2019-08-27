@@ -1,18 +1,19 @@
 #include <bits/stdc++.h>
+
+#include <utility>
 using namespace std;
 
-template <typename T>
-struct Heap {
+template <typename T> struct Heap {
   vector<T> D;
   function<bool(T, T)> cmp;
-  Heap(function<bool(T, T)> cmp = less<T>()) : D(1), cmp(cmp) {}
+  explicit Heap(function<bool(T, T)> cmp = less<T>()) : D(1), cmp(move(cmp)) {}
 
   void push(const T& x) {
     D.emplace_back(x);
     for (int t = D.size() - 1; t > 1; t >>= 1)
       if (cmp(D[t], D[t >> 1])) swap(D[t], D[t >> 1]);
   }
-  const T top() const { return D[1]; }
+  T top() const { return D[1]; }
   void pop() {
     swap(D.at(1), D.back()), D.pop_back();
     for (size_t t = 1;;) {

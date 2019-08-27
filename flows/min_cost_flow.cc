@@ -1,12 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <typename T>
-struct MinCostFlow {
-  struct Edge {
-    int u, v;
-    T c, w, f;
-  };
+template <typename T> struct MinCostFlow {
+  struct Edge { int u, v; T c, w, f; };
   const T eps = T(1e-9), INF = numeric_limits<T>::max();
   vector<Edge> E;
   int n, src, sink;
@@ -14,17 +10,12 @@ struct MinCostFlow {
   T flow = T(), cost = T();
   MinCostFlow(int n, int src, int sink) : n(n), src(src), sink(sink), G(n) {}
 
-  void clear_flow() {
-    for (auto& e : E) e.f = T();
-    flow = cost = T();
-  }
-  void reduce() {
-    for (auto& e : E) e.c -= e.f;
-  }
-  void add_edge(int u, int v, T cap, T cost) {
+  void clear_flow() { for (auto& e : E) e.f = T(); flow = cost = T(); }
+  void reduce() { for (auto& e : E) e.c -= e.f; }
+  void add_edge(int u, int v, T cap, T w) {
     assert(0 <= u && u < n && 0 <= v && v < n);
-    G[u].push_back(E.size()), E.push_back({u, v, cap, cost, T()});
-    G[v].push_back(E.size()), E.push_back({v, u, 0, -cost, T()});
+    G[u].push_back(E.size()), E.push_back({u, v, cap, w, T()});
+    G[v].push_back(E.size()), E.push_back({v, u, 0, -w, T()});
   }
   T min_cost_flow(T f = -1) {
     if (f < 0) f = INF;

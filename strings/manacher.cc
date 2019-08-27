@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <typename T>
-vector<int> manacher(const T& S) {
+template <typename T> vector<int> manacher(const T& S) {
   int n = int(S.size());
   vector<int> F(n + n - 1, 1);
   for (int i = 1, x = 0; i < n + n - 1; i++) {
