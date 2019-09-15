@@ -8,18 +8,12 @@ vector<int> tarjan_scc(const vector<vector<int>>& G) {
   auto dfs = [&](int u, auto f) -> void {
     In[u] = L[u] = ++ts, S[t++] = u;
     for (auto v : G[u]) {
-      if (!In[v])
-        f(v, f), L[u] = min(L[u], L[v]);
-      else if (C[v] < 0)
-        L[u] = min(L[u], In[v]);
+      if (!In[v]) f(v, f), L[u] = min(L[u], L[v]);
+      else if (C[v] < 0) L[u] = min(L[u], In[v]);
     }
-    if (L[u] == In[u]) {
-      while (t && S[t] != u) C[S[--t]] = nc;
-      nc++;
-    }
+    if (L[u] == In[u]) { while (t && S[t] != u) C[S[--t]] = nc; nc++; }
   };
-  for (size_t i = 0; i < G.size(); i++)
-    if (!In[i]) dfs(i, dfs);
+  for (size_t i = 0; i < G.size(); i++) if (!In[i]) dfs(i, dfs);
   return C;
 }
 

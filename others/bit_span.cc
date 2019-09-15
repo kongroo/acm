@@ -1,19 +1,17 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <class T>
-vector<T> xor_span(const vector<T>& a) {
-  auto v = a;
+template <class T> vector<T> xor_span(vector<T> a) {
   int k = 0;
   for (int i = 0; i < 8 * int(sizeof(T)); i++) {
-    auto p = find_if(v.begin() + k, v.end(), [i](int x) { return x & 1 << i; });
-    if (p == v.end()) continue;
-    swap(v[k], *p);
-    for (int j = 0; j < int(v.size()); j++)
-      if (j != k && (v[j] & 1 << i)) v[j] ^= v[k];
+    auto p = find_if(a.begin() + k, a.end(), [i](T x) { return x & T(1) << i; });
+    if (p == a.end()) continue;
+    swap(a[k], *p);
+    for (int j = 0; j < int(a.size()); j++)
+      if (j != k && (a[j] & T(1) << i)) a[j] ^= a[k];
     k++;
   }
-  return v.resize(k), v;
+  return a.resize(k), a;
 }
 
 // CF. 1101G

@@ -7,9 +7,7 @@ struct PDSU {
   vector<int> V, R;
   PDSU(int n) : n(n), D(n), V(n, -1), R(1, 1) {
     for (int i = n - 1; i; i--) D[i] = {i << 1, i << 1 | 1};
-    for (auto& d : D)
-      for (int i : {0, 1})
-        if (d[i] >= n) d[i] -= n;
+    for (auto& d : D) for (int i : {0, 1}) if (d[i] >= n) d[i] -= n;
   }
 
   int get_ver(int t) { return t < 0 ? t + (int)R.size() : t; }

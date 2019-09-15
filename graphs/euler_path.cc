@@ -2,9 +2,7 @@
 using namespace std;
 
 struct EulerGraph : public vector<vector<int>> {
-  struct Edge {
-    int u, v;
-  };
+  struct Edge { int u, v; };
   const bool dir;
   vector<Edge> edges;
   vector<unsigned> ind;
@@ -33,6 +31,7 @@ struct EulerGraph : public vector<vector<int>> {
       ans.push_back(u);
     };
     dfs(start, dfs);
+    reverse(ans.begin(), ans.end());
     return ans;
   }
 };
