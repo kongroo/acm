@@ -2,8 +2,7 @@
 using namespace std;
 
 // {u, v} not split to {u, v} and {v, u}
-template <class Edge>
-vector<int> bcc_vetex(const vector<Edge>& E, const vector<vector<int>>& G) {
+template <class Edge> vector<int> bcc_vetex(const vector<Edge>& E, const vector<vector<int>>& G) {
   int n = int(G.size()), m = int(E.size()), ts = 0, t = 0, c = 0;
   vector<int> In(n), L(n), S(m), B(m), C(m);
   auto dfs = [&](int u, auto f) -> void {
@@ -13,27 +12,18 @@ vector<int> bcc_vetex(const vector<Edge>& E, const vector<vector<int>>& G) {
       if (!B[i]) S[++t] = i, B[i] = 1;
       if (!In[v]) {
         f(v, f), L[u] = min(L[u], L[v]);
-        if (L[v] >= In[u]) {
-          ++c;
-          do
-            C[S[t]] = c;
-          while (S[t--] != i);
-        }
-      } else
-        L[u] = min(L[u], In[v]);
+        if (L[v] >= In[u]) { ++c; do C[S[t]] = c; while (S[t--] != i); }
+      } else L[u] = min(L[u], In[v]);
     }
   };
-  for (int i = 0; i < n; i++)
-    if (!In[i]) dfs(i, dfs);
+  for (int i = 0; i < n; i++) if (!In[i]) dfs(i, dfs);
   return C;
 }
 
 // CF. 962F
 const int N = 1e5 + 5;
 int n, m, F[N], Cv[N], Ce[N];
-struct Edge {
-  int u, v;
-};
+struct Edge { int u, v; };
 vector<Edge> E(1);
 vector<vector<int>> G(N);
 vector<int> S[N];

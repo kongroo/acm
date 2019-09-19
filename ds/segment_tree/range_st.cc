@@ -1,15 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <class T>
-struct RangeST {
+template <class T> struct RangeST {
   const int n, h;
   vector<T> V, D;
   vector<char> B;
   function<T(T, T)> op;
   function<T(T, T, int)> al;
-  RangeST(
-      const vector<T>& A, function<T(T, T)> op = plus<T>(),
+  RangeST( const vector<T>& A, function<T(T, T)> op = plus<T>(),
       function<T(T, T, int)> al = [](T v, T d, int k) { return v + d * k; })
       : n(A.size()), h(32 - __builtin_clz(n)), V(n * 2), D(n), B(n), op(op), al(al) {
     copy(A.begin(), A.end(), V.begin() + n), build(0, n);
@@ -47,7 +45,7 @@ struct RangeST {
   }
   T query(int l, int r) {
     assert(l < r), push(l, l + 1), push(r - 1, r);
-    T left, right;
+    T left = T(), right = T();
     bool b1 = false, b2 = false;
     for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
       if (l & 1) left = b1 ? op(left, V[l++]) : V[l++], b1 = true;
