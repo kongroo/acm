@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <class T>
-struct SingleST {
+template <class T> struct SingleST {
   const int n;
   vector<T> V;
   using Func = function<T(T, T)>;

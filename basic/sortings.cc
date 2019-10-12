@@ -48,20 +48,20 @@ void merge_sort(It l, It r) {
 template <class It, class Cmp>
 void quick_sort(It l, It r, Cmp cmp) {
   if (distance(l, r) < 2) return;
-  if (distance(l, r) <= 20) return insertion_sort(l, r, cmp);
+  // if (distance(l, r) <= 20) return insertion_sort(l, r, cmp);
   const auto &a = *l, &b = *(r - 1), &c = *(l + distance(l, r) / 2);
   auto pivot = max(min(a, b, cmp), min(max(a, b, cmp), c, cmp), cmp);
   It u = l, v = r;
-  for (It i = u; i < v; ++i, i = max(i, u))
-    if (cmp(*i, pivot))
-      swap(*i--, *u++);
-    else if (cmp(pivot, *i))
-      swap(*i--, *--v);
+  for (It i = u; i < v; ) {
+    if (cmp(*i, pivot)) swap(*i++, *u++);
+    else if (cmp(pivot, *i)) swap(*i, *--v);
+    else ++i;
+  }
   quick_sort(l, u, cmp), quick_sort(v, r, cmp);
 }
 template <class It>
 void quick_sort(It l, It r) {
-  quick_sort(l, r, less<decltype(*l)>());
+  quick_sort(l, r, less<typename iterator_traits<It>::value_type>());
 }
 
 int main() {

@@ -17,12 +17,10 @@ void arrange(vector<T>& A) {
 int add(int x, int y) { return (x + y) % P; }
 int mpow(long long a, int k) {
   int r = 1;
-  for (a %= P; k; k >>= 1, a = a * a % P)
-    if (k & 1) r = r * a % P;
+  for (a %= P; k; k >>= 1, a = a * a % P) if (k & 1) r = r * a % P;
   return r;
 }
-template <typename T>
-void fourier(vector<T>& A, int inv) {
+template <typename T> void fourier(vector<T>& A, int inv) {
   assert(inv == -1 || inv == 1);
   int n = 1 << (32 - __builtin_clz(A.size() - 1));
   A.resize(n), arrange(A);
@@ -34,11 +32,9 @@ void fourier(vector<T>& A, int inv) {
         A[s + i] = add(A[s + i], t);
   }
   int t = mpow(n, P - 2);
-  if (inv == -1)
-    for (int i = 0; i < n; i++) A[i] = 1LL * A[i] * t % P;
+  if (inv == -1) for (int i = 0; i < n; i++) A[i] = 1LL * A[i] * t % P;
 }
-template <typename T>
-vector<T> multiply(vector<T> A, vector<T> B) {
+template <typename T> vector<T> multiply(vector<T> A, vector<T> B) {
   int s = A.size() + B.size() - 1;
   A.resize(s), B.resize(s), fourier(A, 1), fourier(B, 1);
   for (size_t i = 0; i < A.size(); i++) A[i] = 1LL * A[i] * B[i] % P;

@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <typename T>
-vector<int> build_sa(const T& S, vector<int>& Sa, vector<int>& H) {
+template <typename T> vector<int> build_sa(const T& S, vector<int>& Sa, vector<int>& H) {
   int n = (int)S.size();
   vector<int> R(S.begin(), S.end()), U;
   Sa.resize(n + 1), iota(Sa.begin(), Sa.end(), 0), R.push_back(INT_MIN);
