@@ -2,36 +2,36 @@
 using namespace std;
 
 struct Sieve {
-  vector<int> L, Phi, P;
-  Sieve(int n) : L(n), Phi(n, 1) {
-    L[1] = 1;
+  vector<int> low, phi, pr;
+  Sieve(int n) : low(n), phi(n, 1) {
+    low[1] = 1;
     for (int x = 2; x < n; x++) {
-      if (!L[x]) P.push_back(L[x] = x), Phi[x] = x - 1;
-      for (auto p : P) {
+      if (!low[x]) pr.push_back(low[x] = x), phi[x] = x - 1;
+      for (auto p : pr) {
         if (x * p >= n) break;
-        L[x * p] = p;
-        Phi[x * p] = Phi[x] * (p - (x % p != 0));
+        low[x * p] = p;
+        phi[x * p] = phi[x] * (p - (x % p != 0));
         if (x % p == 0) break;
       }
     }
   }
 
-  vector<int> factorize(long long n) {
-    vector<int> R;
-    for (int i = 0; 1LL * P[i] * P[i] <= n; i++) {
-      if (n % P[i]) continue;
+  vector<long long> factorize(long long n) {
+    vector<long long> ret;
+    for (int i = 0; 1ll * pr[i] * pr[i] <= n; i++) {
+      if (n % pr[i]) continue;
       do {
-        n /= P[i], R.push_back(P[i]);
-      } while (n % P[i] == 0);
+        n /= pr[i], ret.push_back(pr[i]);
+      } while (n % pr[i] == 0);
     }
-    if (n > 1) R.push_back(n);
-    return R;
+    if (n > 1) ret.push_back(n);
+    return ret;
   }
   vector<int> factorize_low(int n) {
-    assert(n < (int)L.size());
-    vector<int> R;
-    while (n != 1) R.push_back(L[n]), n /= L[n];
-    return R;
+    assert(n < (int)low.size());
+    vector<int> ret;
+    while (n != 1) ret.push_back(low[n]), n /= low[n];
+    return ret;
   }
 };
 
