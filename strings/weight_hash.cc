@@ -1,6 +1,19 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+struct HashW2 {
+  using ull = unsigned long long;
+  vector<ull> p1, p2;
+  HashW2(int n) : p1(n, 1313131313), p2(n, 131313131) {
+    for (int i = 1; i < n; ++i) p1[i] *= p1[i - 1], p2[i] *= p2[i - 1];
+  }
+  template <class T> pair<ull, ull> get(const T &seq) const {
+    pair<ull, ull> r = make_pair(0ull, 0ull);
+    for (auto c : seq) r.first += p1[c], r.second += p2[c];
+    return r;
+  }
+};
+
 // works for [0, n)
 struct HashW {
   using ULL = unsigned long long;
