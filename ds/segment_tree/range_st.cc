@@ -2,13 +2,14 @@
 using namespace std;
 
 template <class T> struct RangeST {
-  const int n, h;
+  int n, h;
   vector<T> V, D;
   vector<char> B;
   function<T(T, T)> op;
   function<T(T, T, int)> al;
-  RangeST( const vector<T>& A, function<T(T, T)> op = plus<T>(),
-      function<T(T, T, int)> al = [](T v, T d, int k) { return v + d * k; })
+  RangeST() {}
+  RangeST(const vector<T>& A, function<T(T, T)> op = [](T x, T y) { return min(x, y); },
+      function<T(T, T, int)> al = [](T v, T d, int k) { return v + d; })
       : n(A.size()), h(32 - __builtin_clz(n)), V(n * 2), D(n), B(n), op(op), al(al) {
     copy(A.begin(), A.end(), V.begin() + n), build(0, n);
   }

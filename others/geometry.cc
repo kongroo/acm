@@ -38,7 +38,7 @@ constexpr bool operator==(Vec a, Vec b) { return cmp(a, b) == 0; }
 constexpr bool between(Num a, Num b, Num c) { return min(b, c) <= a && a <= max(b, c); }
 
 // Care for overflow
-constexpr Vec intersect(Ray a, const Ray& b) {
+constexpr Vec intersect(Ray a, const Ray &b) {
   Vec t = a.u - a.v, s = b.u - b.v;
   Num o = s * t;
   if (!o) return NOVEC;
